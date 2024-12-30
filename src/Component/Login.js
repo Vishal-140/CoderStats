@@ -82,10 +82,7 @@ function Login() {
         </div>
 
         <p className="text-center text-sm text-gray-400">
-          New user?{" "}
-          <a href="/register" className="text-blue-400 hover:underline">
-            Register Here
-          </a>
+          Don't have an account? <a href="/signup" className="text-blue-500">Sign up</a>
         </p>
 
         <SignInwithGoogle />

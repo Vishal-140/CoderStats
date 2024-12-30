@@ -1,11 +1,12 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth, db } from "./Firebase";
 import { toast } from "react-toastify";
-import { setDoc, doc, getDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom"; 
+import { setDoc, doc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+import googleLogo from "../google.png"; // Import the image directly
 
 function SignInwithGoogle() {
-  const navigate = useNavigate();
+  const navigate = useNavigate();  // Initialize navigate for routing
 
   function googleLogin() {
     const provider = new GoogleAuthProvider();
@@ -17,8 +18,8 @@ function SignInwithGoogle() {
           // Split the displayName into first, middle, and last name if applicable
           const nameParts = user.displayName?.split(" ");
           const firstName = nameParts[0];
-          const middleName = nameParts.length > 2 ? nameParts.slice(1, nameParts.length - 1).join(" ") : "";
-          const lastName = nameParts[nameParts.length - 1] || "";
+          const middleName = nameParts.length > 2 ? nameParts.slice(1, nameParts.length - 1).join(" ") : ""; // If there's a middle name
+          const lastName = nameParts[nameParts.length - 1] || ""; // Default to empty string if no last name
 
           // Store user info in Firestore
           await setDoc(doc(db, "Users", user.uid), {
@@ -29,26 +30,12 @@ function SignInwithGoogle() {
             photo: user.photoURL,
           });
 
-          // Check if the college and leetcode fields are empty
-          const docRef = doc(db, "Users", user.uid);
-          const docSnap = await getDoc(docRef);
-
-          if (docSnap.exists()) {
-            const userData = docSnap.data();
-            const college = userData.college || "";
-            const leetcode = userData.leetcode || "";
-
-            // If either field is empty, navigate to /datainput
-            if (!college || !leetcode) {
-              navigate("/datainput");
-            } else {
-              navigate("/dashboard");
-            }
-          }
-
           toast.success("User logged in successfully", {
             position: "top-center",
           });
+
+          // Use navigate to redirect to the DataInput page after login
+          navigate("/datainput");
         }
       })
       .catch((error) => {
@@ -67,7 +54,7 @@ function SignInwithGoogle() {
         onClick={googleLogin}
       >
         <img
-          src={googleLogo} 
+          src={googleLogo} // Use imported google logo here
           alt="Google Logo"
           className="object-contain"
         />
