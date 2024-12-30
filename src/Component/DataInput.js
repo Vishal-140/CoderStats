@@ -161,126 +161,8 @@ function DataInput() {
         <>
           <h1 className="text-2xl font-bold mt-6 text-white">Welcome, {userDetails.firstName}</h1>
           <div className="bg-gray-700 p-6 rounded-lg shadow-lg w-full max-w-4xl mt-4 text-white">
-            <div className="mb-4">
-              <label className="block text-gray-300">College</label>
-              <input
-                type="text"
-                name="college"
-                value={formData.college}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-600 rounded mt-2 bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your college"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-300">LeetCode</label>
-              <input
-                type="text"
-                name="leetcode"
-                value={formData.leetcode}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-600 rounded mt-2 bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your LeetCode ID"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-300">GeeksforGeeks (GFG)</label>
-              <input
-                type="text"
-                name="gfg"
-                value={formData.gfg}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-600 rounded mt-2 bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your GFG ID"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-300">Coding Ninjas</label>
-              <input
-                type="text"
-                name="codingNinjas"
-                value={formData.codingNinjas}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-600 rounded mt-2 bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your Coding Ninjas ID"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-300">HackerEarth</label>
-              <input
-                type="text"
-                name="hackerEarth"
-                value={formData.hackerEarth}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-600 rounded mt-2 bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your HackerEarth ID"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-300">CodeChef</label>
-              <input
-                type="text"
-                name="codeChef"
-                value={formData.codeChef}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-600 rounded mt-2 bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your CodeChef ID"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-300">HackerRank</label>
-              <input
-                type="text"
-                name="hackerRank"
-                value={formData.hackerRank}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-600 rounded mt-2 bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your HackerRank ID"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-300">LinkedIn</label>
-              <input
-                type="text"
-                name="linkedin"
-                value={formData.linkedin}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-600 rounded mt-2 bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your LinkedIn URL"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-300">GitHub</label>
-              <input
-                type="text"
-                name="github"
-                value={formData.github}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-600 rounded mt-2 bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your GitHub URL"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-300">Country</label>
-              <input
-                type="text"
-                name="country"
-                value={formData.country}
-                onChange={handleInputChange}
-                className="w-full p-2 border border-gray-600 rounded mt-2 bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter your country"
-              />
-            </div>
-
+            
+            {/* Profile Picture Section */}
             <div className="mb-6">
               <label className="block text-gray-300">Profile Picture</label>
               {formData.photo ? (
@@ -307,6 +189,32 @@ function DataInput() {
               )}
               {loading && <p className="text-center text-gray-300 mt-2">Uploading...</p>}
             </div>
+
+            {/* Input Fields Section */}
+            {[
+              { label: "College", name: "college" },
+              { label: "LeetCode", name: "leetcode" },
+              { label: "GeeksforGeeks (GFG)", name: "gfg" },
+              { label: "Coding Ninjas", name: "codingNinjas" },
+              { label: "HackerEarth", name: "hackerEarth" },
+              { label: "CodeChef", name: "codeChef" },
+              { label: "HackerRank", name: "hackerRank" },
+              { label: "LinkedIn", name: "linkedin" },
+              { label: "GitHub", name: "github" },
+              { label: "Country", name: "country" },
+            ].map(({ label, name }) => (
+              <div className="mb-4" key={name}>
+                <label className="block text-gray-300">{label}</label>
+                <input
+                  type="text"
+                  name={name}
+                  value={formData[name]}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-600 rounded mt-2 bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder={`Enter your ${label}`}
+                />
+              </div>
+            ))}
 
             {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
