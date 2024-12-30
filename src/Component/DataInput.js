@@ -20,8 +20,8 @@ function DataInput() {
     codeChef: "",
     hackerRank: "",
   });
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);  // State to track loading
+  const [errorMessage, setErrorMessage] = useState(""); // Error state
   const navigate = useNavigate();
 
   const fetchUserData = async (user) => {
@@ -35,7 +35,7 @@ function DataInput() {
           leetcode: data.leetcode || "",
           gfg: data.gfg || "",
           codingNinjas: data.codingNinjas || "",
-          photo: data.photo || "",
+          photo: data.photo || "",  // Set the photo URL from Firestore
           college: data.college || "",
           linkedin: data.linkedin || "",
           github: data.github || "",
@@ -54,20 +54,11 @@ function DataInput() {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        fetchUserData(user);
-        // Check for required fields after fetching user data
-        if (!userDetails?.college || !userDetails?.leetcode) {
-          navigate("/datainput");
-        } else {
-          navigate("/dashboard");
-        }
-      } else {
-        navigate("/login");
-      }
+      if (user) fetchUserData(user);
+      else navigate("/login");
     });
     return () => unsubscribe();
-  }, [userDetails, navigate]);
+  }, [navigate]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -86,23 +77,24 @@ function DataInput() {
         photo: objectURL,
       }));
 
-      setLoading(true);
+      setLoading(true);  // Set loading to true before upload
 
       const storageRef = ref(storage, `profile_pictures/${auth.currentUser.uid}`);
       try {
+        // Upload the image to Firebase Storage
         await uploadBytes(storageRef, file);
-        const photoURL = await getDownloadURL(storageRef);
+        const photoURL = await getDownloadURL(storageRef); // Get the uploaded image's download URL
 
         const user = auth.currentUser;
         if (user) {
           const docRef = doc(db, "Users", user.uid);
-          await updateDoc(docRef, { photo: photoURL });
+          await updateDoc(docRef, { photo: photoURL }); // Update Firestore with the new photo URL
         }
 
-        setLoading(false);
+        setLoading(false);  // Reset loading state after upload completes
       } catch (error) {
         console.error("Error uploading photo:", error.message);
-        setLoading(false);
+        setLoading(false);  // Reset loading state if an error occurs
       }
     }
   };
@@ -110,13 +102,13 @@ function DataInput() {
   const handleRemovePhoto = async () => {
     setFormData((prevState) => ({
       ...prevState,
-      photo: "",
+      photo: "",  // Remove the photo locally
     }));
 
     const user = auth.currentUser;
     if (user) {
       const docRef = doc(db, "Users", user.uid);
-      await updateDoc(docRef, { photo: "" });
+      await updateDoc(docRef, { photo: "" });  // Remove photo from Firestore
     }
   };
 
@@ -134,7 +126,7 @@ function DataInput() {
       const user = auth.currentUser;
       if (user) {
         const docRef = doc(db, "Users", user.uid);
-        await updateDoc(docRef, formData);
+        await updateDoc(docRef, formData); // Save the form data to Firestore
         navigate("/dashboard");
       }
     } catch (error) {
@@ -143,13 +135,13 @@ function DataInput() {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    navigate(-1); // Go back to the previous page
   };
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
-      navigate("/login");
+      await signOut(auth); // Log out the user
+      navigate("/login"); // Redirect to the login page after logout
     } catch (error) {
       console.error("Error logging out:", error.message);
     }
@@ -161,78 +153,185 @@ function DataInput() {
         <>
           <h1 className="text-2xl font-bold mt-6 text-white">Welcome, {userDetails.firstName}</h1>
           <div className="bg-gray-700 p-6 rounded-lg shadow-lg w-full max-w-4xl mt-4 text-white">
-            
-            {/* Profile Picture Section */}
-            <div className="mb-6">
-              <label className="block text-gray-300">Profile Picture</label>
-              {formData.photo ? (
-                <div className="relative">
-                  <img
-                    src={formData.photo}
-                    alt="Profile"
-                    className="w-32 h-32 rounded-full object-cover mx-auto mt-2"
+            <div className="flex justify-between">
+              <div className="w-full flex justify-center mb-4">
+                <div className="relative mb-4">
+                  <input
+                    type="file"
+                    onChange={handlePhotoUpload}
+                    className="absolute inset-0 w-full h-full opacity-0"
                   />
-                  <button
-                    type="button"
-                    onClick={handleRemovePhoto}
-                    className="absolute top-0 right-0 text-white bg-red-600 p-1 rounded-full"
-                  >
-                    X
-                  </button>
+                  <img
+                    src={formData.photo || "https://via.placeholder.com/150"}
+                    alt="User Profile"
+                    className="w-40 h-40 rounded-full object-cover border-4 border-white-500"
+                  />
                 </div>
-              ) : (
-                <input
-                  type="file"
-                  onChange={handlePhotoUpload}
-                  className="w-full p-2 mt-2 bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none"
-                />
-              )}
-              {loading && <p className="text-center text-gray-300 mt-2">Uploading...</p>}
+                {loading && <div className="text-white">Uploading...</div>}
+                
+                {/* Option to remove/change profile picture */}
+                <div className="mb-4 text-sm text-gray-400 flex space-x-4">
+                  <button
+                    onClick={handleRemovePhoto}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    Remove Photo
+                  </button>
+                  
+                  <label
+                    htmlFor="photo-upload"
+                    className="text-blue-500 cursor-pointer hover:text-blue-700"
+                  >
+                    Change Photo
+                  </label>
+                  <input
+                    id="photo-upload"
+                    type="file"
+                    onChange={handlePhotoUpload}
+                    className="hidden"
+                  />
+                </div>
+              </div>
             </div>
 
-            {/* Input Fields Section */}
-            {[
-              { label: "College", name: "college" },
-              { label: "LeetCode", name: "leetcode" },
-              { label: "GeeksforGeeks (GFG)", name: "gfg" },
-              { label: "Coding Ninjas", name: "codingNinjas" },
-              { label: "HackerEarth", name: "hackerEarth" },
-              { label: "CodeChef", name: "codeChef" },
-              { label: "HackerRank", name: "hackerRank" },
-              { label: "LinkedIn", name: "linkedin" },
-              { label: "GitHub", name: "github" },
-              { label: "Country", name: "country" },
-            ].map(({ label, name }) => (
-              <div className="mb-4" key={name}>
-                <label className="block text-gray-300">{label}</label>
+            {/* Form inputs */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-gray-400">College (Required)</label>
                 <input
                   type="text"
-                  name={name}
-                  value={formData[name]}
+                  name="college"
+                  value={formData.college}
                   onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-600 rounded mt-2 bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder={`Enter your ${label}`}
+                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                  required
                 />
               </div>
-            ))}
+              <div>
+                <label className="block text-gray-400">LinkedIn Profile</label>
+                <input
+                  type="text"
+                  name="linkedin"
+                  value={formData.linkedin}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-400">GitHub Profile</label>
+                <input
+                  type="text"
+                  name="github"
+                  value={formData.github}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-400">Country</label>
+                <input
+                  type="text"
+                  name="country"
+                  value={formData.country}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                />
+              </div>
+            </div>
 
-            {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+            {/* Other profile fields */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-gray-400">LeetCode Profile</label>
+                <input
+                  type="text"
+                  name="leetcode"
+                  value={formData.leetcode}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                  placeholder="Enter Your Leetcode Profile ID"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-400">GFG Profile</label>
+                <input
+                  type="text"
+                  name="gfg"
+                  value={formData.gfg}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                  placeholder="Enter Your GFG Profile ID"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-400">Coding Ninjas Profile</label>
+                <input
+                  type="text"
+                  name="codingNinjas"
+                  value={formData.codingNinjas}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                  placeholder="Enter Your Coding Ninjas Profile ID"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-400">HackerEarth Profile</label>
+                <input
+                  type="text"
+                  name="hackerEarth"
+                  value={formData.hackerEarth}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                  placeholder="Enter Your HackerEarth Profile ID"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-400">CodeChef Profile</label>
+                <input
+                  type="text"
+                  name="codeChef"
+                  value={formData.codeChef}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                  placeholder="Enter Your CodeChef Profile ID"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-400">HackerRank Profile</label>
+                <input
+                  type="text"
+                  name="hackerRank"
+                  value={formData.hackerRank}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                  placeholder="Enter Your HackerRank Profile ID"
+                />
+              </div>
+            </div>
 
-            <div className="flex justify-between mt-6">
-              <button
-                type="button"
-                onClick={handleBack}
-                className="px-4 py-2 bg-gray-500 rounded text-white"
-              >
-                Back
-              </button>
-              <button
-                type="button"
-                onClick={handleSave}
-                className="px-4 py-2 bg-blue-500 rounded text-white"
-              >
-                Save
-              </button>
+            {/* Actions */}
+            <div className="mt-6 space-y-2">
+              {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+              <div className="flex space-x-4">
+                <button
+                  onClick={handleBack}
+                  className="w-full bg-gray-600 text-white p-2 rounded hover:bg-gray-500"
+                >
+                  Back
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="w-full bg-red-500 text-white p-2 rounded hover:bg-red-600"
+                >
+                  Logout
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+                >
+                  Save Changes
+                </button>
+              </div>
             </div>
           </div>
         </>
