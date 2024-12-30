@@ -154,7 +154,7 @@ function DataInput() {
           <h1 className="text-2xl font-bold mt-6 text-white">Welcome, {userDetails.firstName}</h1>
           <div className="bg-gray-700 p-6 rounded-lg shadow-lg w-full max-w-4xl mt-4 text-white">
             <div className="flex justify-between">
-              <div className="w-full flex justify-center mb-4">
+              <div className="flex flex-col items-center w-1/2 mr-4">
                 <div className="relative mb-4">
                   <input
                     type="file"
@@ -172,144 +172,145 @@ function DataInput() {
                 {/* Option to remove/change profile picture */}
                 <div className="mb-4 text-sm text-gray-400 flex space-x-4">
                   <button
-                    onClick={handleRemovePhoto}
-                    className="text-red-500 hover:text-red-700"
+                  onClick={handleRemovePhoto}
+                  className="text-red-500 hover:text-red-700"
                   >
                     Remove Photo
                   </button>
                   
                   <label
-                    htmlFor="photo-upload"
-                    className="text-blue-500 cursor-pointer hover:text-blue-700"
+                  htmlFor="photo-upload"
+                  className="text-blue-500 cursor-pointer hover:text-blue-700"
                   >
-                    Change Photo
+                  Change Photo
                   </label>
                   <input
-                    id="photo-upload"
-                    type="file"
-                    onChange={handlePhotoUpload}
-                    className="hidden"
+                  id="photo-upload"
+                  type="file"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
                   />
+                </div>
+
+                {/* Form inputs */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-gray-400">College (Required)</label>
+                    <input
+                      type="text"
+                      name="college"
+                      value={formData.college}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-400">LinkedIn Profile</label>
+                    <input
+                      type="text"
+                      name="linkedin"
+                      value={formData.linkedin}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-400">GitHub Profile</label>
+                    <input
+                      type="text"
+                      name="github"
+                      value={formData.github}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-400">Country</label>
+                    <input
+                      type="text"
+                      name="country"
+                      value={formData.country}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Other profile fields */}
+              <div className="w-1/2 ml-4">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-gray-400">LeetCode Profile</label>
+                    <input
+                      type="text"
+                      name="leetcode"
+                      value={formData.leetcode}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                      placeholder="Enter Your Leetcode Profile ID"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-400">GFG Profile</label>
+                    <input
+                      type="text"
+                      name="gfg"
+                      value={formData.gfg}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                      placeholder="Enter Your GFG Profile ID"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-400">Coding Ninjas Profile</label>
+                    <input
+                      type="text"
+                      name="codingNinjas"
+                      value={formData.codingNinjas}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                      placeholder="Enter Your Coding Ninjas Profile ID"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-400">HackerEarth Profile</label>
+                    <input
+                      type="text"
+                      name="hackerEarth"
+                      value={formData.hackerEarth}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                      placeholder="Enter Your HackerEarth Profile ID"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-400">CodeChef Profile</label>
+                    <input
+                      type="text"
+                      name="codeChef"
+                      value={formData.codeChef}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                      placeholder="Enter Your CodeChef Profile ID"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-400">HackerRank Profile</label>
+                    <input
+                      type="text"
+                      name="hackerRank"
+                      value={formData.hackerRank}
+                      onChange={handleInputChange}
+                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
+                      placeholder="Enter Your HackerRank Profile ID"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Form inputs */}
-            <div className="space-y-4">
-              <div>
-                <label className="block text-gray-400">College (Required)</label>
-                <input
-                  type="text"
-                  name="college"
-                  value={formData.college}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-gray-400">LinkedIn Profile</label>
-                <input
-                  type="text"
-                  name="linkedin"
-                  value={formData.linkedin}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-400">GitHub Profile</label>
-                <input
-                  type="text"
-                  name="github"
-                  value={formData.github}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-400">Country</label>
-                <input
-                  type="text"
-                  name="country"
-                  value={formData.country}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                />
-              </div>
-            </div>
-
-            {/* Other profile fields */}
-            <div className="space-y-4">
-              <div>
-                <label className="block text-gray-400">LeetCode Profile</label>
-                <input
-                  type="text"
-                  name="leetcode"
-                  value={formData.leetcode}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                  placeholder="Enter Your Leetcode Profile ID"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-400">GFG Profile</label>
-                <input
-                  type="text"
-                  name="gfg"
-                  value={formData.gfg}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                  placeholder="Enter Your GFG Profile ID"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-400">Coding Ninjas Profile</label>
-                <input
-                  type="text"
-                  name="codingNinjas"
-                  value={formData.codingNinjas}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                  placeholder="Enter Your Coding Ninjas Profile ID"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-400">HackerEarth Profile</label>
-                <input
-                  type="text"
-                  name="hackerEarth"
-                  value={formData.hackerEarth}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                  placeholder="Enter Your HackerEarth Profile ID"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-400">CodeChef Profile</label>
-                <input
-                  type="text"
-                  name="codeChef"
-                  value={formData.codeChef}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                  placeholder="Enter Your CodeChef Profile ID"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-400">HackerRank Profile</label>
-                <input
-                  type="text"
-                  name="hackerRank"
-                  value={formData.hackerRank}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                  placeholder="Enter Your HackerRank Profile ID"
-                />
-              </div>
-            </div>
-
-            {/* Actions */}
             <div className="mt-6 space-y-2">
               {errorMessage && <p className="text-red-500">{errorMessage}</p>}
               <div className="flex space-x-4">
