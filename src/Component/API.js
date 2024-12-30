@@ -1,7 +1,13 @@
 const API = {
-    leetcodeAPI: 'https://alfa-leetcode-api.onrender.com/userProfile/',
     // leetcodeAPI: 'https://leetcode.com/graphql',
-    gfgAPI: 'https://alfa-leetcode-api.onrender.com/userProfile/',
+    leetcodeAPI: 'https://alfa-leetcode-api.onrender.com/userProfile/',
+    gfgAPI: 'https://geeksforgeeksapi.vercel.app/api/gfg?username=',
+
+    Codeforces: 'https://codeforces.com/api/user.info?handles=',
+    CodeChef: '',
+    HackerRank: '',
+    codingNinjasAPI: '',
+    
 };
 
 export default API;

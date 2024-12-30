@@ -1,154 +1,74 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ProfileCard from './ProfileCard';
-import NavigationCard from './NavigationCard';
-import RecentSubmissions from './RecentSubmissions';
-import SubmissionStats from './SubmissionStats';
-import CalendarCard from './CalendarCard';
-import StatsSummaryCard from './StatsSummaryCard';
-import DifficultyStatsCard from './DifficultyStatsCard';
 
 const GFGStats = () => {
-  const [stats, setStats] = useState(null);
-  const [recentSubmissionsCount, setRecentSubmissionsCount] = useState(5);
-  const [calendarData, setCalendarData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [data, setData] = useState(null); // State to store the fetched data
+  const [loading, setLoading] = useState(true); // State to track loading status
+  const [error, setError] = useState(null); // State to track any errors
 
   useEffect(() => {
-    const fetchStats = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const response = await axios.get(`https://alfa-leetcode-api`);
-        setStats(response.data);
-
-        const sixMonthsAgo = Date.now() - 6 * 30 * 24 * 60 * 60 * 1000;
-        const filteredCalendarData = Object.entries(response.data.submissionCalendar).filter(([timestamp]) => {
-          return parseInt(timestamp) * 1000 > sixMonthsAgo;
-        });
-
-        setCalendarData(filteredCalendarData);
-      } catch (err) {
-        setError('Failed to fetch stats. Please check the username or try again.');
-      } finally {
+    // Fetch data when the component mounts
+    axios
+      .get('https://geeksforgeeksapi.vercel.app/api/gfg?username=vishalkumarchaurasia')
+      .then((response) => {
+        setData(response.data); // Store the fetched data
+        setLoading(false); // Set loading to false
+      })
+      .catch((error) => {
+        setError('Failed to fetch data'); // Handle errors
         setLoading(false);
-      }
-    };
+      });
+  }, []); // Empty array means this effect runs only once when the component mounts
 
-    fetchStats();
-  }, []);
+  if (loading) return <div className="text-center text-lg">Loading...</div>; // Show loading message
+  if (error) return <div className="text-center text-red-500">{error}</div>; // Show error message
 
-  const handleSeeMoreClick = () => {
-    setRecentSubmissionsCount((prevCount) => prevCount + 5);
-  };
-
-  // Default values for when loading or in case of an error
-  const defaultStats = {
-    totalSolved: 'NA',
-    totalActiveDays: 'NA',
-    ranking: 'NA',
-    contributionPoint: 'NA',
-    reputation: 'NA',
-    totalSubmissions: [],
-    easySolved: 'NA',
-    totalEasy: 'NA',
-    mediumSolved: 'NA',
-    totalMedium: 'NA',
-    hardSolved: 'NA',
-    totalHard: 'NA',
-    recentSubmissions: [],
-  };
-
-  // Default calendar with "NA" values
-  const defaultCalendarData = [
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-    ['NA', 0],
-  ];
-
-  const displayStats = stats || defaultStats;
-  const displayCalendarData = calendarData.length > 0 ? calendarData : defaultCalendarData;
-  const loadingContent = <div className="text-center text-lg">Loading...</div>;
-  const errorContent = <div className="text-center text-red-500">{error}</div>;
-
+  // Display the data once it is loaded
   return (
-    <div className="max-w-7xl mx-auto p-6 bg-gray-800 text-white shadow-lg rounded-lg">
-      <h1 className="text-3xl font-bold text-center mb-6">GeeksforGeeks Stats</h1>
+    <div className="max-w-4xl mx-auto p-6 bg-gray-800 text-white shadow-lg rounded-lg space-y-8">
+      <h1 className="text-4xl font-bold text-center text-blue-400">GeeksforGeeks Stats</h1>
 
-      {loading && loadingContent}
-      {error && errorContent}
-
-      <div className="flex flex-col space-y-6">
-        <div className="flex flex-col lg:flex-row lg:space-x-6">
-          <div className="w-full lg:w-1/4 space-y-6">
-            <ProfileCard stats={displayStats} username="Vishal140" />
-            <NavigationCard />
-          </div>
-
-          <div className="flex-1 space-y-6">
-            <CalendarCard calendarData={displayCalendarData} />
-
-            <div className="flex flex-col lg:flex-row justify-between space-y-6 lg:space-y-0 lg:space-x-6">
-              <div className="w-full space-y-6">
-                <StatsSummaryCard
-                  totalSolved={displayStats.totalSolved}
-                  totalActiveDays={displayStats.totalActiveDays}
-                  ranking={displayStats.ranking}
-                  contributionPoint={displayStats.contributionPoint}
-                  reputation={displayStats.reputation}
-                />
-              </div>
-
-              <div className="w-full space-y-6">
-                <SubmissionStats totalSubmissions={displayStats.totalSubmissions} />
-                <DifficultyStatsCard
-                  easySolved={displayStats.easySolved}
-                  totalEasy={displayStats.totalEasy}
-                  mediumSolved={displayStats.mediumSolved}
-                  totalMedium={displayStats.totalMedium}
-                  hardSolved={displayStats.hardSolved}
-                  totalHard={displayStats.totalHard}
-                />
-              </div>
-            </div>
-          </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {/* Profile Information */}
+        <div className="bg-gray-700 p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold text-blue-300">Profile Information</h2>
+          <p><strong>Username:</strong> {data.username}</p>
+          <p><strong>Global Rank:</strong> {data.globalRank}</p>
+          <p><strong>Country Rank:</strong> {data.countryRank}</p>
+          <p><strong>Coding Score:</strong> {data.codingScore}</p>
         </div>
 
-        <div className="w-full mt-6">
-          <RecentSubmissions
-            recentSubmissions={displayStats.recentSubmissions}
-            recentSubmissionsCount={recentSubmissionsCount}
-            handleSeeMoreClick={handleSeeMoreClick}
-          />
+        {/* Coding Stats */}
+        <div className="bg-gray-700 p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold text-blue-300">Coding Stats</h2>
+          <p><strong>Problems Solved:</strong> {data.codingStats.problemsSolved}</p>
+          <p><strong>Submissions:</strong> {data.codingStats.submissions}</p>
         </div>
       </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {/* Streak */}
+        <div className="bg-gray-700 p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold text-blue-300">Streak</h2>
+          <p><strong>Streak:</strong> {data.streak}</p>
+        </div>
+
+        {/* Contest Rating */}
+        <div className="bg-gray-700 p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold text-blue-300">Contest Rating</h2>
+          <p><strong>Contest Rating:</strong> {data.contestRating}</p>
+        </div>
+      </div>
+
+      <div className="bg-gray-700 p-6 rounded-lg shadow-md">
+  <h2 className="text-xl font-semibold text-blue-300">Problem Difficulty Breakdown</h2>
+  <p><strong>School:</strong> {parseInt(data.school.match(/\d+/)) || 0}</p>
+  <p><strong>Basic:</strong> {parseInt(data.basic.match(/\d+/)) || 0}</p>
+  <p><strong>Easy:</strong> {parseInt(data.easy.match(/\d+/)) || 0}</p>
+  <p><strong>Medium:</strong> {parseInt(data.medium.match(/\d+/)) || 0}</p>
+  <p><strong>Hard:</strong> {parseInt(data.hard.match(/\d+/)) || 0}</p>
+</div>
+
     </div>
   );
 };
