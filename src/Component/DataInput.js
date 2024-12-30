@@ -3,7 +3,6 @@ import { auth, db, storage } from "./Firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { signOut } from "firebase/auth";
 
 function DataInput() {
   const [userDetails, setUserDetails] = useState(null);
@@ -20,30 +19,22 @@ function DataInput() {
     codeChef: "",
     hackerRank: "",
   });
-  const [loading, setLoading] = useState(false);  // State to track loading
-  const [errorMessage, setErrorMessage] = useState(""); // Error state
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const fetchUserData = async (user) => {
     try {
       const docRef = doc(db, "Users", user.uid);
       const docSnap = await getDoc(docRef);
+
       if (docSnap.exists()) {
         const data = docSnap.data();
         setUserDetails(data);
-        setFormData({
-          leetcode: data.leetcode || "",
-          gfg: data.gfg || "",
-          codingNinjas: data.codingNinjas || "",
-          photo: data.photo || "",  // Set the photo URL from Firestore
-          college: data.college || "",
-          linkedin: data.linkedin || "",
-          github: data.github || "",
-          country: data.country || "",
-          hackerEarth: data.hackerEarth || "",
-          codeChef: data.codeChef || "",
-          hackerRank: data.hackerRank || "",
-        });
+        setFormData((prev) => ({
+          ...prev,
+          ...data,
+        }));
       } else {
         console.log("User data not found");
       }
@@ -54,11 +45,14 @@ function DataInput() {
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) fetchUserData(user);
-      else navigate("/login");
+      if (user) {
+        if (!userDetails) fetchUserData(user);
+      } else {
+        navigate("/login");
+      }
     });
     return () => unsubscribe();
-  }, [navigate]);
+  }, [navigate, userDetails]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -77,43 +71,32 @@ function DataInput() {
         photo: objectURL,
       }));
 
-      setLoading(true);  // Set loading to true before upload
+      setLoading(true);
 
       const storageRef = ref(storage, `profile_pictures/${auth.currentUser.uid}`);
       try {
-        // Upload the image to Firebase Storage
         await uploadBytes(storageRef, file);
-        const photoURL = await getDownloadURL(storageRef); // Get the uploaded image's download URL
+        const photoURL = await getDownloadURL(storageRef);
 
         const user = auth.currentUser;
         if (user) {
           const docRef = doc(db, "Users", user.uid);
-          await updateDoc(docRef, { photo: photoURL }); // Update Firestore with the new photo URL
+          await updateDoc(docRef, { photo: photoURL });
         }
 
-        setLoading(false);  // Reset loading state after upload completes
+        setLoading(false);
       } catch (error) {
         console.error("Error uploading photo:", error.message);
-        setLoading(false);  // Reset loading state if an error occurs
+        setLoading(false);
       }
-    }
-  };
-
-  const handleRemovePhoto = async () => {
-    setFormData((prevState) => ({
-      ...prevState,
-      photo: "",  // Remove the photo locally
-    }));
-
-    const user = auth.currentUser;
-    if (user) {
-      const docRef = doc(db, "Users", user.uid);
-      await updateDoc(docRef, { photo: "" });  // Remove photo from Firestore
     }
   };
 
   const handleSave = async () => {
     try {
+      const user = auth.currentUser;
+      if (!user) return;
+
       const { college, leetcode, gfg, codingNinjas, hackerEarth, codeChef, hackerRank } = formData;
 
       if (!college || !(leetcode || gfg || codingNinjas || hackerEarth || codeChef || hackerRank)) {
@@ -123,219 +106,150 @@ function DataInput() {
         return;
       }
 
-      const user = auth.currentUser;
-      if (user) {
-        const docRef = doc(db, "Users", user.uid);
-        await updateDoc(docRef, formData); // Save the form data to Firestore
-        navigate("/dashboard");
-      }
+      const docRef = doc(db, "Users", user.uid);
+      await updateDoc(docRef, formData);
+      navigate("/dashboard");
     } catch (error) {
       console.error("Error saving user data:", error.message);
-    }
-  };
-
-  const handleBack = () => {
-    navigate(-1); // Go back to the previous page
-  };
-
-  const handleLogout = async () => {
-    try {
-      await signOut(auth); // Log out the user
-      navigate("/login"); // Redirect to the login page after logout
-    } catch (error) {
-      console.error("Error logging out:", error.message);
     }
   };
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gray-800">
       {userDetails ? (
-        <>
-          <h1 className="text-2xl font-bold mt-6 text-white">Welcome, {userDetails.firstName}</h1>
-          <div className="bg-gray-700 p-6 rounded-lg shadow-lg w-full max-w-4xl mt-4 text-white">
-            <div className="flex justify-between">
-              <div className="flex flex-col items-center w-1/2 mr-4">
-                <div className="relative mb-4">
-                  <input
-                    type="file"
-                    onChange={handlePhotoUpload}
-                    className="absolute inset-0 w-full h-full opacity-0"
-                  />
-                  <img
-                    src={formData.photo || "https://via.placeholder.com/150"}
-                    alt="User Profile"
-                    className="w-40 h-40 rounded-full object-cover border-4 border-white-500"
-                  />
-                </div>
-                {loading && <div className="text-white">Uploading...</div>}
-                
-                {/* Option to remove/change profile picture */}
-                <div className="mb-4 text-sm text-gray-400 flex space-x-4">
-                  <button
-                  onClick={handleRemovePhoto}
-                  className="text-red-500 hover:text-red-700"
-                  >
-                    Remove Photo
-                  </button>
-                  
-                  <label
-                  htmlFor="photo-upload"
-                  className="text-blue-500 cursor-pointer hover:text-blue-700"
-                  >
-                  Change Photo
-                  </label>
-                  <input
-                  id="photo-upload"
-                  type="file"
-                  onChange={handlePhotoUpload}
-                  className="hidden"
-                  />
-                </div>
+        <div className="w-full max-w-md p-4 bg-white rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-center mb-4">Update Your Details</h2>
 
-                {/* Form inputs */}
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-gray-400">College (Required)</label>
-                    <input
-                      type="text"
-                      name="college"
-                      value={formData.college}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-400">LinkedIn Profile</label>
-                    <input
-                      type="text"
-                      name="linkedin"
-                      value={formData.linkedin}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-400">GitHub Profile</label>
-                    <input
-                      type="text"
-                      name="github"
-                      value={formData.github}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-400">Country</label>
-                    <input
-                      type="text"
-                      name="country"
-                      value={formData.country}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                    />
-                  </div>
-                </div>
-              </div>
+          {errorMessage && <p className="text-red-500 mb-4">{errorMessage}</p>}
 
-              {/* Other profile fields */}
-              <div className="w-1/2 ml-4">
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-gray-400">LeetCode Profile</label>
-                    <input
-                      type="text"
-                      name="leetcode"
-                      value={formData.leetcode}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                      placeholder="Enter Your Leetcode Profile ID"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-400">GFG Profile</label>
-                    <input
-                      type="text"
-                      name="gfg"
-                      value={formData.gfg}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                      placeholder="Enter Your GFG Profile ID"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-400">Coding Ninjas Profile</label>
-                    <input
-                      type="text"
-                      name="codingNinjas"
-                      value={formData.codingNinjas}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                      placeholder="Enter Your Coding Ninjas Profile ID"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-400">HackerEarth Profile</label>
-                    <input
-                      type="text"
-                      name="hackerEarth"
-                      value={formData.hackerEarth}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                      placeholder="Enter Your HackerEarth Profile ID"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-400">CodeChef Profile</label>
-                    <input
-                      type="text"
-                      name="codeChef"
-                      value={formData.codeChef}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                      placeholder="Enter Your CodeChef Profile ID"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-gray-400">HackerRank Profile</label>
-                    <input
-                      type="text"
-                      name="hackerRank"
-                      value={formData.hackerRank}
-                      onChange={handleInputChange}
-                      className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                      placeholder="Enter Your HackerRank Profile ID"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 space-y-2">
-              {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-              <div className="flex space-x-4">
-                <button
-                  onClick={handleBack}
-                  className="w-full bg-gray-600 text-white p-2 rounded hover:bg-gray-500"
-                >
-                  Back
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="w-full bg-red-500 text-white p-2 rounded hover:bg-red-600"
-                >
-                  Logout
-                </button>
-                <button
-                  onClick={handleSave}
-                  className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </div>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">College</label>
+            <input
+              type="text"
+              name="college"
+              value={formData.college}
+              onChange={handleInputChange}
+              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
           </div>
-        </>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">LeetCode</label>
+            <input
+              type="text"
+              name="leetcode"
+              value={formData.leetcode}
+              onChange={handleInputChange}
+              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">GeeksforGeeks</label>
+            <input
+              type="text"
+              name="gfg"
+              value={formData.gfg}
+              onChange={handleInputChange}
+              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Coding Ninjas</label>
+            <input
+              type="text"
+              name="codingNinjas"
+              value={formData.codingNinjas}
+              onChange={handleInputChange}
+              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">LinkedIn</label>
+            <input
+              type="text"
+              name="linkedin"
+              value={formData.linkedin}
+              onChange={handleInputChange}
+              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">GitHub</label>
+            <input
+              type="text"
+              name="github"
+              value={formData.github}
+              onChange={handleInputChange}
+              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Country</label>
+            <input
+              type="text"
+              name="country"
+              value={formData.country}
+              onChange={handleInputChange}
+              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">HackerEarth</label>
+            <input
+              type="text"
+              name="hackerEarth"
+              value={formData.hackerEarth}
+              onChange={handleInputChange}
+              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">CodeChef</label>
+            <input
+              type="text"
+              name="codeChef"
+              value={formData.codeChef}
+              onChange={handleInputChange}
+              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">HackerRank</label>
+            <input
+              type="text"
+              name="hackerRank"
+              value={formData.hackerRank}
+              onChange={handleInputChange}
+              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700">Photo</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoUpload}
+              className="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <button
+            onClick={handleSave}
+            disabled={loading}
+            className="w-full px-4 py-2 font-bold text-white bg-blue-500 rounded hover:bg-blue-600 focus:outline-none focus:shadow-outline"
+          >
+            {loading ? "Saving..." : "Save"}
+          </button>
+        </div>
       ) : (
         <p className="mt-6 text-lg text-white">Loading...</p>
       )}
