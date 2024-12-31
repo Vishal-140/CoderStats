@@ -93,30 +93,37 @@ const NavBar = () => {
       </div>
 
       <ul className="flex space-x-8">
+        {/* Dashboard link */}
+        <li>
+          <a href="/dashboard" className="text-lg font-bold text-white hover:text-[#F8970D]">
+            Dashboard
+          </a>
+        </li>
+
         {usernames.leetcode && (
           <li>
-            <a href="/leetcode" className="text-lg text-white hover:text-[#F8970D]">
+            <a href="/leetcode" className="text-lg font-bold text-white hover:text-[#F8970D]">
               LeetCode
             </a>
           </li>
         )}
         {usernames.gfg && (
           <li>
-            <a href="/gfg" className="text-lg text-white hover:text-[#F8970D]">
+            <a href="/gfg" className="text-lg font-bold text-white hover:text-[#F8970D]">
               GeeksForGeeks
             </a>
           </li>
         )}
         {usernames.codingNinjas && (
           <li>
-            <a href="/codingNinjas" className="text-lg text-white hover:text-[#F8970D]">
+            <a href="/codingNinjas" className="text-lg font-bold text-white hover:text-[#F8970D]">
               Coding Ninjas
             </a>
           </li>
         )}
         {usernames.hackerEarth && (
           <li>
-            <a href="/hackerEarth" className="text-lg text-white hover:text-[#F8970D]">
+            <a href="/hackerEarth" className="text-lg font-bold text-white hover:text-[#F8970D]">
               HackerEarth
             </a>
           </li>
@@ -130,7 +137,7 @@ const NavBar = () => {
         )}
         {usernames.hackerRank && (
           <li>
-            <a href="/hackerRank" className="text-lg text-white hover:text-[#F8970D]">
+            <a href="/hackerRank" className="text-lg font-bold text-white hover:text-[#F8970D]">
               HackerRank
             </a>
           </li>
