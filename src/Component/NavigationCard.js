@@ -11,10 +11,10 @@ const NavigationCard = () => (
         <a href="/leetcode" className="text-white hover:text-gray-400 font-bold">LeetCode</a>
       </li>
       <li className="bg-gray-600 p-3 rounded-md hover:bg-gray-500 transition-all">
-        <a href="/codingninjas" className="text-white hover:text-gray-400 font-bold">CodingNinjas</a>
+        <a href="/gfg" className="text-white hover:text-gray-400 font-bold">GFG</a>
       </li>
       <li className="bg-gray-600 p-3 rounded-md hover:bg-gray-500 transition-all">
-        <a href="/gfg" className="text-white hover:text-gray-400 font-bold">GFG</a>
+        <a href="/codeforces" className="text-white hover:text-gray-400 font-bold">CodeForces</a>
       </li>
     </ul>
   </div>

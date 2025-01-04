@@ -10,15 +10,13 @@ function DataInput() {
   const [formData, setFormData] = useState({
     leetcode: "",
     gfg: "",
-    codingNinjas: "",
+    codeforces: "",
     photo: "",
     college: "",
     linkedin: "",
     github: "",
     country: "",
-    hackerEarth: "",
-    codeChef: "",
-    hackerRank: "",
+    
   });
   const [loading, setLoading] = useState(false);  // State to track loading
   const [errorMessage, setErrorMessage] = useState(""); // Error state
@@ -34,15 +32,12 @@ function DataInput() {
         setFormData({
           leetcode: data.leetcode || "",
           gfg: data.gfg || "",
-          codingNinjas: data.codingNinjas || "",
+          codeforces: data.codeforces || "",
           photo: data.photo || "",  // Set the photo URL from Firestore
           college: data.college || "",
           linkedin: data.linkedin || "",
           github: data.github || "",
           country: data.country || "",
-          hackerEarth: data.hackerEarth || "",
-          codeChef: data.codeChef || "",
-          hackerRank: data.hackerRank || "",
         });
       } else {
         console.log("User data not found");
@@ -114,11 +109,11 @@ function DataInput() {
 
   const handleSave = async () => {
     try {
-      const { college, leetcode, gfg, codingNinjas, hackerEarth, codeChef, hackerRank } = formData;
+      const { college, leetcode, gfg, codeforces} = formData;
 
-      if (!college || !(leetcode || gfg || codingNinjas || hackerEarth || codeChef || hackerRank)) {
+      if (!college || !(leetcode || gfg || codeforces)) {
         setErrorMessage(
-          "Please fill in the college and at least one profile from LeetCode, GFG, Coding Ninjas, HackerEarth, CodeChef, or HackerRank."
+          "Please fill in the college and at least one profile from LeetCode, GFG or Codeforces."
         );
         return;
       }
@@ -264,16 +259,20 @@ function DataInput() {
                     />
                   </div>
                   <div>
-                    <label className="block text-gray-400">Coding Ninjas Profile</label>
+                    <label className="block text-gray-400">CodeForces Profile</label>
                     <input
                       type="text"
-                      name="codingNinjas"
-                      value={formData.codingNinjas}
+                      name="codeforces"
+                      value={formData.codeforces}
                       onChange={handleInputChange}
                       className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
-                      placeholder="Enter Your Coding Ninjas Profile ID"
+                      placeholder="Enter Your CodeForces Profile ID"
                     />
                   </div>
+
+                  {/* comming soon */}
+                  <p className="text-red-500 text-sm mt-2">Coming Soon for this platforms as well.</p>
+                  
                   <div>
                     <label className="block text-gray-400">HackerEarth Profile</label>
                     <input
@@ -283,6 +282,7 @@ function DataInput() {
                       onChange={handleInputChange}
                       className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
                       placeholder="Enter Your HackerEarth Profile ID"
+                      disabled // This disables the input field
                     />
                   </div>
                   <div>
@@ -294,6 +294,7 @@ function DataInput() {
                       onChange={handleInputChange}
                       className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
                       placeholder="Enter Your CodeChef Profile ID"
+                      disabled // This disables the input field
                     />
                   </div>
                   <div>
@@ -305,6 +306,7 @@ function DataInput() {
                       onChange={handleInputChange}
                       className="w-full p-2 border border-gray-600 rounded-md bg-gray-800 text-white"
                       placeholder="Enter Your HackerRank Profile ID"
+                      disabled // This disables the input field
                     />
                   </div>
                 </div>

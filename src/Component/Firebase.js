@@ -1,8 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";  // For authentication
+import { getAuth, setPersistence, browserLocalPersistence, onAuthStateChanged } from "firebase/auth";  // For authentication
 import { getFirestore } from "firebase/firestore";  // For Firestore
-import { getStorage } from "firebase/storage";  // Import Firebase Storage
+import { getStorage } from "firebase/storage";  // For Firebase Storage
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -23,5 +23,21 @@ const auth = getAuth(firebaseApp);  // For Authentication
 const db = getFirestore(firebaseApp);  // For Firestore
 const storage = getStorage(firebaseApp);  // Initialize Firebase Storage
 
-// Export services and firebaseApp to use in other components
-export { firebaseApp, auth, db, storage };  // Export firebaseApp along with other services
+// Set persistence for authentication (ensures the user remains logged in across sessions)
+setPersistence(auth, browserLocalPersistence)
+  .then(() => {
+    onAuthStateChanged(auth, (currentUser) => {
+      // Here you can manage user state based on authentication status
+      if (currentUser) {
+        console.log("User is logged in:", currentUser);
+      } else {
+        console.log("No user logged in.");
+      }
+    });
+  })
+  .catch((error) => {
+    console.log("Error setting persistence:", error.message);
+  });
+
+// Export services to use in other components
+export { firebaseApp, auth, db, storage };

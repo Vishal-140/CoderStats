@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { auth, db } from './Firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 
 const NavBar = () => {
   const [usernames, setUsernames] = useState({
     leetcode: '',
     gfg: '',
-    codingNinjas: '',
-    hackerEarth: '',
-    codeChef: '',
-    hackerRank: '',
+    codeforces: '',
   });
   const [user, setUser] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -22,22 +19,41 @@ const NavBar = () => {
     photo: '/logoCS.png',
   };
 
-  const fetchUserData = (userId) => {
+  // Firebase persistence to avoid session loss
+  useEffect(() => {
+    setPersistence(auth, browserLocalPersistence)
+      .then(() => {
+        onAuthStateChanged(auth, (currentUser) => {
+          setUser((prevUser) => {
+            // Set user only if the current user is different
+            if (prevUser?.uid !== currentUser?.uid) {
+              return currentUser;
+            }
+            return prevUser;
+          });
+        });
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+  }, []);
+
+  // Fetch user data and update only if it changes
+  const fetchUserData = useCallback((userId) => {
     const docRef = doc(db, 'Users', userId);
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        userData.photo = userData.photo || '/logoCS.png';
-        setUserDetails(userData); // This will update the profile photo automatically
+        userData.photo = userData.photo || defaultValues.photo;
+        setUserDetails(userData); 
       } else {
         console.log('User data not found');
       }
     });
+    return unsubscribe;
+  }, []);
 
-    return unsubscribe; // Cleanup the listener when the component unmounts
-  };
-
-  const fetchUsernames = (userId) => {
+  const fetchUsernames = useCallback((userId) => {
     const userRef = doc(db, 'Users', userId);
     const unsubscribe = onSnapshot(userRef, (docSnap) => {
       if (docSnap.exists()) {
@@ -45,47 +61,52 @@ const NavBar = () => {
         setUsernames({
           leetcode: data.leetcode || '',
           gfg: data.gfg || '',
-          codingNinjas: data.codingNinjas || '',
-          hackerEarth: data.hackerEarth || '',
-          codeChef: data.codeChef || '',
-          hackerRank: data.hackerRank || '',
+          codeforces: data.codeforces || '',
         });
       }
     });
-
-    return unsubscribe; // Cleanup the listener when the component unmounts
-  };
-
-  useEffect(() => {
-    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        setUser(currentUser);
-        fetchUsernames(currentUser.uid); // Fetch and listen for changes in user data
-        fetchUserData(currentUser.uid); // Listen for changes in user data (including photo)
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => unsubscribeAuth();
+    return unsubscribe;
   }, []);
+
+  // Handle user authentication state changes
+  useEffect(() => {
+    if (user) {
+      const unsubscribeUsernames = fetchUsernames(user.uid); 
+      const unsubscribeUserData = fetchUserData(user.uid); 
+
+      return () => {
+        unsubscribeUsernames();
+        unsubscribeUserData();
+      };
+    }
+  }, [user, fetchUserData, fetchUsernames]);
 
   const handleLogOut = async () => {
     await auth.signOut();
     navigate('/login');
   };
 
-  const profilePhoto = userDetails ? userDetails.photo : defaultValues.photo;
+  const profilePhoto = userDetails?.photo || defaultValues.photo;
 
-  const handleDropdownClick = () => {
-    setDropdownOpen(!dropdownOpen); // Toggle dropdown open/close
-  };
+  const handleDropdownClick = useCallback(() => {
+    setDropdownOpen((prev) => !prev); 
+  }, []);
+
+  useEffect(() => {
+    let timer;
+    if (dropdownOpen) {
+      timer = setTimeout(() => {
+        setDropdownOpen(false);
+      }, 5000);
+    }
+    return () => clearTimeout(timer); 
+  }, [dropdownOpen]);
 
   return (
     <nav className="flex justify-between items-center p-4 bg-gray-700 shadow-md">
       <div className="flex items-center cursor-pointer" onClick={() => navigate('/dashboard')}>
         <img
-          src="/logoCS.png"
+          src='/logoCS.png'
           alt="CoderStats Logo"
           className="w-12 h-12 mr-3 rounded-full"
         />
@@ -114,31 +135,10 @@ const NavBar = () => {
             </a>
           </li>
         )}
-        {usernames.codingNinjas && (
+        {usernames.codeforces && (
           <li>
-            <a href="/codingNinjas" className="text-lg font-bold text-white hover:text-[#F8970D]">
-              Coding Ninjas
-            </a>
-          </li>
-        )}
-        {usernames.hackerEarth && (
-          <li>
-            <a href="/hackerEarth" className="text-lg font-bold text-white hover:text-[#F8970D]">
-              HackerEarth
-            </a>
-          </li>
-        )}
-        {usernames.codeChef && (
-          <li>
-            <a href="/codeChef" className="text-lg text-white hover:text-[#F8970D]">
-              CodeChef
-            </a>
-          </li>
-        )}
-        {usernames.hackerRank && (
-          <li>
-            <a href="/hackerRank" className="text-lg font-bold text-white hover:text-[#F8970D]">
-              HackerRank
+            <a href="/codeforces" className="text-lg font-bold text-white hover:text-[#F8970D]">
+              CodeForces
             </a>
           </li>
         )}
@@ -184,4 +184,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default React.memo(NavBar);
