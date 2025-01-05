@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { auth, db } from './Firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { onAuthStateChanged, setPersistence, browserLocalPersistence } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const NavBar = () => {
   const [usernames, setUsernames] = useState({
@@ -115,31 +115,34 @@ const NavBar = () => {
 
       <ul className="flex space-x-8">
         {/* Dashboard link */}
-        <li>
-          <a href="/dashboard" className="text-lg font-bold text-white hover:text-[#F8970D]">
+        
+        {usernames.leetcode && (
+          <li>
+            <Link to="/dashboard" className="text-lg font-bold text-white hover:text-[#F8970D]">
             Dashboard
-          </a>
-        </li>
+            </Link>
+          </li>
+        )}
 
         {usernames.leetcode && (
           <li>
-            <a href="/leetcode" className="text-lg font-bold text-white hover:text-[#F8970D]">
+            <Link to="/leetcode" className="text-lg font-bold text-white hover:text-[#F8970D]">
               LeetCode
-            </a>
+            </Link>
           </li>
         )}
         {usernames.gfg && (
           <li>
-            <a href="/gfg" className="text-lg font-bold text-white hover:text-[#F8970D]">
+            <Link to="/gfg" className="text-lg font-bold text-white hover:text-[#F8970D]">
               GeeksForGeeks
-            </a>
+            </Link>
           </li>
         )}
         {usernames.codeforces && (
           <li>
-            <a href="/codeforces" className="text-lg font-bold text-white hover:text-[#F8970D]">
+            <Link to="/codeforces" className="text-lg font-bold text-white hover:text-[#F8970D]">
               CodeForces
-            </a>
+            </Link>
           </li>
         )}
       </ul>

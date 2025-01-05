@@ -11,7 +11,7 @@ import { auth, db } from "./Firebase";
 import { doc, getDoc } from "firebase/firestore";
 import API from './API'; // Import the API.js to access the URLs
 
-const LeetCodeStats = () => {
+const Dashboard = () => {
   const [stats, setStats] = useState(null);
   const [calendarData, setCalendarData] = useState({});
   const [loading, setLoading] = useState(true);
@@ -137,4 +137,4 @@ const LeetCodeStats = () => {
   );
 };
 
-export default LeetCodeStats;
+export default Dashboard;

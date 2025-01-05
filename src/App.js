@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import NavBar from './Component/NavBar';
 import Footer from './Component/Footer';
 import Dashboard from './Component/Dashboard';
@@ -9,12 +9,17 @@ import Login from './Component/Login';
 import Register from './Component/Register';
 import DataInput from './Component/DataInput';
 import CodeForcesStats from './Component/CodeForcesStats';
-import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
+  const location = useLocation(); // Get the current route
+
+  // Define routes where NavBar should not be visible
+  const noNavBarRoutes = ['/login', '/register'];
+  const isNavBarVisible = !noNavBarRoutes.includes(location.pathname);
+
   return (
-    <Router>
-      <NavBar />
+    <>
+      {isNavBarVisible && <NavBar />}
       
       <div style={{ padding: '20px' }}>
         <Routes>
@@ -33,8 +38,14 @@ const App = () => {
       </div>
 
       <Footer />
-    </Router>
+    </>
   );
 };
 
-export default App;
+const Root = () => (
+  <Router>
+    <App />
+  </Router>
+);
+
+export default Root;
