@@ -92,7 +92,7 @@ const LeetCodeStats = () => {
   // Show components with default values when loading
   return (
     <div className="max-w-7xl mx-auto p-6 mt-20 bg-gray-800 text-white shadow-lg rounded-lg">
-      <h1 className="text-3xl font-bold text-center mb-6">LeetCode Stats</h1>
+      <h1 className="text-3xl font-bold text-center ">LeetCode Stats</h1>
 
       {error && <div className="text-center text-red-500">{error}</div>}
 

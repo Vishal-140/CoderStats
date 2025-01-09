@@ -102,7 +102,7 @@ const Dashboard = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-4 mt-20 bg-gray-800 text-white shadow-lg rounded-lg">
-      <h1 className="text-3xl font-bold text-center pt-3">Coding Platforms Dashboard</h1>
+      <h1 className="text-3xl font-bold text-center">Coding Platforms Dashboard</h1>
 
       <div className="flex flex-col space-y-4">
         <div className="flex flex-col lg:flex-row lg:space-x-4">

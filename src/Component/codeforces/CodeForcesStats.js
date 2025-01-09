@@ -1,163 +1,245 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { auth, db } from '../Firebase';
-import { doc, getDoc } from "firebase/firestore";
-import API from '../API';
-import ProfileCard from '../ProfileCard';  
-import NavigationCard from '../NavigationCard';  
-import CalendarCard from '../CalendarCard';
+import { 
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell
+} from 'recharts';
+import { 
+  Trophy, Star, Target, BookOpen, Award, 
+  TrendingUp, Users, Check, BarChart2 
+} from 'lucide-react';
 
-const CodeForcesStats = () => {
-  const [data, setData] = useState(null);
+const CodeForcesDashboard = ({ username = "vishal140" }) => {
+  const [userData, setUserData] = useState(null);
+  const [submissions, setSubmissions] = useState([]);
+  const [ratingHistory, setRatingHistory] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [username, setUsername] = useState('');
-  const [calendarData, setCalendarData] = useState({}); // State for calendar data
-
-  const defaultStats = {
-    problemCount: '00',
-    contributedProblems: '00',
-    rating: '00',
-    maxRating: '00',
-    ratingHistory: [],
-    friendOf: [],
-    easy: '00',
-    medium: '00',
-    hard: '00',
-  };
-
-  // Fetch user data from Firestore
-  const fetchUserData = async (user) => {
-    try {
-      const docRef = doc(db, "Users", user.uid);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setUsername(docSnap.data().codeforces);
-      }
-    } catch (error) {
-      console.error("Error fetching user data from Firestore:", error.message);
-    }
-  };
-
-  // Fetch stats from the Codeforces API
-  const fetchStats = async () => {
-    if (!username) return;
-  
-    setLoading(true);
-    setError(null);
-  
-    try {
-      const response = await axios.get(`${API.CodeforcesAPI}${username}`);
-      const result = response.data?.result; // Ensure result exists
-      if (Array.isArray(result) && result.length > 0) {
-        setData(result[0]); // Safely access the first element
-      } else {
-        throw new Error('No data found for the given username.');
-      }
-    } catch (err) {
-      console.error('Error Fetching Codeforces Data:', err);
-      setError(err.message || 'Error fetching Codeforces data.');
-    } finally {
-      setLoading(false);
-    }
-  };
-  
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) fetchUserData(user);
-    });
+    const fetchUserData = async () => {
+      try {
+        const userResponse = await fetch(`https://codeforces.com/api/user.info?handles=${username}`);
+        const userResult = await userResponse.json();
+        setUserData(userResult.result[0]);
 
-    return () => unsubscribe();
-  }, []);
+        const ratingResponse = await fetch(`https://codeforces.com/api/user.rating?handle=${username}`);
+        const ratingResult = await ratingResponse.json();
+        setRatingHistory(ratingResult.result.map(entry => ({
+          contestName: entry.contestName,
+          rating: entry.newRating,
+          rank: entry.rank
+        })));
 
-  useEffect(() => {
-    if (username) fetchStats();
+        const statusResponse = await fetch(`https://codeforces.com/api/user.status?handle=${username}`);
+        const statusResult = await statusResponse.json();
+        setSubmissions(statusResult.result);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
   }, [username]);
 
-  const getValue = (value, defaultValue = '00') => {
-    return value !== null && value !== undefined ? value : defaultValue;
+  const getVerdict = (submissions) => {
+    const verdicts = submissions.reduce((acc, sub) => {
+      acc[sub.verdict] = (acc[sub.verdict] || 0) + 1;
+      return acc;
+    }, {});
+
+    return [
+      { name: 'Accepted', value: verdicts.OK || 0, color: '#22C55E' },
+      { name: 'Wrong Answer', value: verdicts.WRONG_ANSWER || 0, color: '#EF4444' },
+      { name: 'Time Limit', value: verdicts.TIME_LIMIT_EXCEEDED || 0, color: '#F59E0B' }
+    ];
   };
 
-  // Default stats to be shown while loading
-  const displayData = loading ? defaultStats : data || defaultStats;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
+        <div className="text-blue-500 text-xl">Loading...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-7xl mx-auto p-6 mt-20 bg-gray-800 text-white shadow-lg rounded-lg">
-      <h1 className="text-3xl font-bold text-center mb-6">CodeForces Stats</h1>
-      <div className="flex flex-col space-y-6">
-        <div className="flex flex-col lg:flex-row lg:space-x-6">
-          {/* Left Sidebar: Profile and Navigation */}
-          <div className="w-full lg:w-1/4 space-y-6">
-            <ProfileCard stats={displayData} username={username || 'NA'} />
-            <NavigationCard />
+    <div className="min-h-screen bg-gray-900 pt-20 text-white p-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8">
+          <div className="flex items-center gap-4">
+            <img 
+              src={userData?.titlePhoto || "/api/placeholder/100/100"} 
+              alt="Profile" 
+              className="w-16 h-16 rounded-full border-2 border-blue-500"
+            />
+            <div>
+              <h1 className="text-2xl font-bold">{userData?.handle || username}</h1>
+              <p className="text-gray-400">Rank: {userData?.rank || 'Unrated'}</p>
+            </div>
           </div>
-  
-          {/* Right Side: Calendar and Stats */}
-          <div className="flex-1 space-y-6">
-            {/* Calendar Card */}
-              <CalendarCard calendarData={calendarData || {}} />
-            
-            <div className="flex justify-between gap-6">
-              {/* Coding Stats Card */}
-              <div className="bg-gray-700 p-6 rounded-lg shadow-md w-full lg:w-1/3">
-                <h2 className="text-xl font-semibold text-blue-300">Coding Stats</h2>
-                <p><strong>Problems Solved:</strong> {getValue(displayData.problemCount)}</p>
-                <p><strong>Contributed Problems:</strong> {getValue(displayData.contributedProblems)}</p>
-              </div>
-  
-              {/* Contest Rating Card */}
-              <div className="bg-gray-700 p-6 rounded-lg shadow-md w-full lg:w-1/3">
-                <h2 className="text-xl font-semibold text-blue-300">Contest Rating</h2>
-                <p><strong>Contest Rating:</strong> {getValue(displayData.rating)}</p>
-                <p><strong>Max Contest Rating:</strong> {getValue(displayData.maxRating)}</p>
-              </div>
-  
-              {/* Recent Actions Card */}
-              <div className="bg-gray-700 p-6 rounded-lg shadow-md w-full lg:w-1/3">
-                <h2 className="text-xl font-semibold text-blue-300">Recent Actions</h2>
-                <p><strong>Recent Rating Changes:</strong> {getValue(displayData.ratingHistory?.[0]?.newRating)}</p>
-              </div>
+          <div className="flex items-center gap-4 mt-4 md:mt-0">
+            <div className="flex items-center gap-2">
+              <Trophy className="text-yellow-500" />
+              <span>Max Rating: {userData?.maxRating || 0}</span>
             </div>
-  
-            <div className="flex justify-between gap-2">
-              {/* Friends List Card */}
-              <div className="bg-gray-700 p-6 rounded-lg shadow-md w-full sm:w-1/4">
-                <h2 className="text-xl font-semibold text-blue-300">Friends List</h2>
-                {Array.isArray(displayData.friendOf) && displayData.friendOf.length ? (
-                  <ul>
-                    {displayData.friendOf.map((friend, index) => (
-                      <li key={index}><strong>{friend.handle}</strong></li>
+            <div className="flex items-center gap-2">
+              <Star className="text-blue-500" />
+              <span>Current: {userData?.rating || 0}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="bg-gray-800 p-6 rounded-lg">
+            <div className="flex items-center gap-3">
+              <Target className="text-green-500" />
+              <h3>Contribution</h3>
+            </div>
+            <p className="text-2xl font-bold mt-2">{userData?.contribution || 0}</p>
+          </div>
+          
+          <div className="bg-gray-800 p-6 rounded-lg">
+            <div className="flex items-center gap-3">
+              <BookOpen className="text-blue-500" />
+              <h3>Problems Solved</h3>
+            </div>
+            <p className="text-2xl font-bold mt-2">
+              {new Set(submissions.filter(s => s.verdict === 'OK')
+                .map(s => s.problem.name)).size}
+            </p>
+          </div>
+
+          <div className="bg-gray-800 p-6 rounded-lg">
+            <div className="flex items-center gap-3">
+              <Award className="text-purple-500" />
+              <h3>Contest Rating</h3>
+            </div>
+            <p className="text-2xl font-bold mt-2">{userData?.rating || 0}</p>
+          </div>
+
+          <div className="bg-gray-800 p-6 rounded-lg">
+            <div className="flex items-center gap-3">
+              <Users className="text-yellow-500" />
+              <h3>Global Rank</h3>
+            </div>
+            <p className="text-2xl font-bold mt-2">#{userData?.rank || 'NA'}</p>
+          </div>
+        </div>
+
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Rating History */}
+          <div className="bg-gray-800 p-6 rounded-lg">
+            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <TrendingUp className="text-blue-500" />
+              Rating Progress
+            </h3>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={ratingHistory}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                  <XAxis dataKey="contestName" stroke="#9CA3AF" />
+                  <YAxis stroke="#9CA3AF" />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#1F2937', border: 'none' }}
+                    labelStyle={{ color: '#9CA3AF' }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="rating" 
+                    stroke="#3B82F6" 
+                    strokeWidth={2}
+                    dot={{ fill: '#3B82F6' }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Submission Statistics */}
+          <div className="bg-gray-800 p-6 rounded-lg">
+            <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+              <BarChart2 className="text-green-500" />
+              Submission Statistics
+            </h3>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={getVerdict(submissions)}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {getVerdict(submissions).map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
-                  </ul>
-                ) : (
-                  <p>No friends found.</p>
-                )}
-              </div>
-  
-              {/* Problem Difficulty Breakdown Cards */}
-              <div className="bg-gray-700 p-6 rounded-lg shadow-md w-full sm:w-1/4">
-                <h2 className="text-xl font-semibold text-blue-300">Easy Problems</h2>
-                <p><strong>Easy:</strong> {getValue(displayData.easy)}</p>
-              </div>
-  
-              <div className="bg-gray-700 p-6 rounded-lg shadow-md w-full sm:w-1/4">
-                <h2 className="text-xl font-semibold text-blue-300">Medium Problems</h2>
-                <p><strong>Medium:</strong> {getValue(displayData.medium)}</p>
-              </div>
-  
-              <div className="bg-gray-700 p-6 rounded-lg shadow-md w-full sm:w-1/4">
-                <h2 className="text-xl font-semibold text-blue-300">Hard Problems</h2>
-                <p><strong>Hard:</strong> {getValue(displayData.hard)}</p>
-              </div>
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: '#1F2937', border: 'none' }}
+                    formatter={(value, name) => [`${value} submissions`, name]}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
+            <div className="flex justify-center gap-4 mt-4">
+              {getVerdict(submissions).map((entry, index) => (
+                <div key={index} className="flex items-center">
+                  <div 
+                    className="w-3 h-3 rounded-full mr-2"
+                    style={{ backgroundColor: entry.color }}
+                  />
+                  <span className="text-sm">{entry.name}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div className="bg-gray-800 p-6 rounded-lg">
+          <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
+            <Check className="text-green-500" />
+            Recent Submissions
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="text-left border-b border-gray-700">
+                  <th className="pb-3">Problem</th>
+                  <th className="pb-3">Verdict</th>
+                  <th className="pb-3">Language</th>
+                  <th className="pb-3">Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {submissions.slice(0, 5).map((submission, index) => (
+                  <tr key={index} className="border-b border-gray-700">
+                    <td className="py-3">{submission.problem.name}</td>
+                    <td className={`py-3 ${
+                      submission.verdict === 'OK' ? 'text-green-500' : 'text-red-500'
+                    }`}>
+                      {submission.verdict}
+                    </td>
+                    <td className="py-3">{submission.programmingLanguage}</td>
+                    <td className="py-3">
+                      {new Date(submission.creationTimeSeconds * 1000).toLocaleDateString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
     </div>
   );
-  
-  
 };
 
-export default CodeForcesStats;
+export default CodeForcesDashboard;

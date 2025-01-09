@@ -127,14 +127,14 @@ const NavBar = () => {
         navVisible ? 'translate-y-0' : '-translate-y-full'
       }`}
     >
-      <div className="flex justify-between items-center p-4">
+      <div className="flex justify-between items-center pt-1 pl-4 pr-4">
       <div className="flex items-center space-x-2 cursor-pointer"
             onClick={() => navigate('/dashboard')}
             >
               <img
                 src="/logoCS.png"
                 alt="CoderStats Logo"
-                className="w-14 h-14 rounded-full"
+                className="w-10 h-10 rounded-full"
               />
               <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">
                 CoderStats
@@ -169,7 +169,7 @@ const NavBar = () => {
         alt="gfg Logo"
         className="w-8 h-8 rounded-full"
       />
-      <span>GeekForGeeks</span>
+      <span>GeeksForGeeks</span>
     </Link>
   )}
   {usernames.codeforces && (
