@@ -143,7 +143,7 @@ function DataInput() {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-800">
+    <div className="flex flex-col mt-20 items-center min-h-screen bg-gray-800">
       {userDetails ? (
         <>
           <h1 className="text-2xl font-bold mt-6 text-white">Welcome, {userDetails.firstName}</h1>

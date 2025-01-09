@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { auth, db } from './Firebase';
+import { auth, db } from '../Firebase';
 import { doc, getDoc } from "firebase/firestore";
-import ProfileCard from './ProfileCard';  
-import NavigationCard from './NavigationCard';  
-import CalendarCard from './CalendarCard';
-import API from './API'; 
+import API from '../API';
+import ProfileCard from '../ProfileCard';  
+import NavigationCard from '../NavigationCard';  
+import CalendarCard from '../CalendarCard';
 
 const CodeForcesStats = () => {
   const [data, setData] = useState(null);
@@ -83,7 +83,7 @@ const CodeForcesStats = () => {
   const displayData = loading ? defaultStats : data || defaultStats;
 
   return (
-    <div className="max-w-7xl mx-auto p-6 bg-gray-800 text-white shadow-lg rounded-lg">
+    <div className="max-w-7xl mx-auto p-6 mt-20 bg-gray-800 text-white shadow-lg rounded-lg">
       <h1 className="text-3xl font-bold text-center mb-6">CodeForces Stats</h1>
       <div className="flex flex-col space-y-6">
         <div className="flex flex-col lg:flex-row lg:space-x-6">

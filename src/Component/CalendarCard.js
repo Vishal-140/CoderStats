@@ -21,16 +21,16 @@ const CalendarCard = ({ username, calendarData }) => {
   };
 
   return (
-    <div className="bg-gray-700 p-4 rounded-lg shadow-md w-full mt-6">
-      <h3 className="text-lg font-semibold">Submission Calendar</h3>
-      <div className="mt-4">
+    <div className="bg-gray-700 p-4 rounded-lg shadow-md w-full mt-6 max-w-4xl mx-auto sm:p-6 md:mt-8 lg:mt-10">
+      <h3 className="text-lg font-semibold text-center md:text-xl lg:text-2xl">Submission Calendar</h3>
+      <div className="mt-4 flex justify-center">
         <LeetCodeCalendar
           username={username}              // Pass username for identification
-          blockSize={12}                   // Block size for the calendar
-          blockMargin={4}                  // Margin between blocks
-          fontSize={12}                    // Font size inside blocks
+          blockSize={window.innerWidth < 640 ? 8 : 12}  // Smaller blocks on smaller screens
+          blockMargin={window.innerWidth < 640 ? 2 : 4} // Smaller margins on smaller screens
+          fontSize={window.innerWidth < 640 ? 10 : 12}  // Smaller font size on smaller screens
           theme={customTheme}              // Apply the custom theme
-          style={{ maxWidth: '800px', margin: '0 auto' }} // Calendar styling
+          style={{ maxWidth: '100%', margin: '0 auto' }} // Calendar styling
           submissionCalendar={calendarData} // Pass the formatted submission calendar data
         />
       </div>

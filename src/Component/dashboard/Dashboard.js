@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { auth, db } from './Firebase';
+import { auth, db } from '../Firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import axios from 'axios';
-import API from './API';
+import API from '../API';
+import ProfileCard from '../ProfileCard';
+import NavigationCard from '../NavigationCard';
+import CalendarCard from '../CalendarCard';
 import ProblemsCard from './ProblemsCard';
 import RankingsCard from './RankingCard';
 import ContestRatingsCard from './ContestRatingsCard';
 import DifficultyBreakdownCard from './DifficultyBreakdownCard';
-import ProfileCard from './ProfileCard';
-import NavigationCard from './NavigationCard';
-import CalendarCard from './CalendarCard';
+
 
 const Dashboard = () => {
   const [platformData, setPlatformData] = useState({
@@ -100,8 +101,8 @@ const Dashboard = () => {
   }, [usernames]);
 
   return (
-    <div className="max-w-7xl mx-auto p-4 bg-gray-800 text-white shadow-lg rounded-lg">
-      <h1 className="text-3xl font-bold text-center mb-4">Coding Platforms Dashboard</h1>
+    <div className="max-w-7xl mx-auto p-4 mt-20 bg-gray-800 text-white shadow-lg rounded-lg">
+      <h1 className="text-3xl font-bold text-center pt-3">Coding Platforms Dashboard</h1>
 
       <div className="flex flex-col space-y-4">
         <div className="flex flex-col lg:flex-row lg:space-x-4">

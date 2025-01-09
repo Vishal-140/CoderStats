@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ProfileCard from './ProfileCard';
-import NavigationCard from './NavigationCard';
+import { auth, db } from "../Firebase";
+import { doc, getDoc } from "firebase/firestore";
+import API from '../API';
+import ProfileCard from '../ProfileCard';
+import NavigationCard from '../NavigationCard';
 import RecentSubmissions from './RecentSubmissions';
 import SubmissionStats from './SubmissionStats';
-import CalendarCard from './CalendarCard';
+import CalendarCard from '../CalendarCard';
 import StatsSummaryCard from './StatsSummaryCard';
 import DifficultyStatsCard from './DifficultyStatsCard';
-import { auth, db } from "./Firebase";
-import { doc, getDoc } from "firebase/firestore";
-import API from './API'; // Import the API.js to access the URLs
+
 
 const LeetCodeStats = () => {
   const [stats, setStats] = useState(null);
@@ -90,7 +91,7 @@ const LeetCodeStats = () => {
 
   // Show components with default values when loading
   return (
-    <div className="max-w-7xl mx-auto p-6 bg-gray-800 text-white shadow-lg rounded-lg">
+    <div className="max-w-7xl mx-auto p-6 mt-20 bg-gray-800 text-white shadow-lg rounded-lg">
       <h1 className="text-3xl font-bold text-center mb-6">LeetCode Stats</h1>
 
       {error && <div className="text-center text-red-500">{error}</div>}

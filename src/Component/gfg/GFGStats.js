@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ProfileCard from './ProfileCard';
-import CalendarCard from './CalendarCard';
-import { auth, db } from './Firebase';
+import { auth, db } from '../Firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import API from './API'; // Import the API.js to access the URLs
+import API from '../API';
+import ProfileCard from '../ProfileCard';
+import CalendarCard from '../CalendarCard';
+
 
 const GFGStats = () => {
   const [data, setData] = useState(null); // State to store fetched data
@@ -89,11 +90,11 @@ const GFGStats = () => {
   if (loading) {
     // Return default data while loading
     return (
-      <div className="max-w-7xl mx-auto p-6 bg-gray-800 text-white shadow-lg rounded-lg">
+      <div className="max-w-7xl mx-auto p-6 mt-20 bg-gray-800 text-white shadow-lg rounded-lg">
         <h1 className="text-3xl font-bold text-center mb-6">GeeksforGeeks Stats</h1>
         <div className="flex flex-col space-y-6">
           <div className="flex flex-col lg:flex-row lg:space-x-6">
-            {/* Left Sidebar: Profile and Navigation */}
+            {/* Left Sidebar: Profile and Problem Difficulty Breakdown */}
             <div className="w-full lg:w-1/4 space-y-6">
               <ProfileCard stats={defaultStats} username={defaultStats.username} />
               <div className="space-y-6">

@@ -1,17 +1,17 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
-import React from "react";
 import { auth, db } from "./Firebase";
-import { toast } from 'react-toastify';
-import SignInwithGoogle from "./SignInwithGoogle";
-import { useNavigate } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"; // Import icons for show/hide functionality
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import SignInwithGoogle from "./SignInwithGoogle";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 
-function Login() {
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false); // State for toggling password visibility
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const fetchUserData = async (user) => {
@@ -19,166 +19,174 @@ function Login() {
       const docRef = doc(db, "Users", user.uid);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        const data = docSnap.data();
-        return data;  // Return user data
-      } else {
-        console.log("User data not found");
-        toast.error("User data not found", {
-          position: "top-center",
-        });
-        return null;
+        return docSnap.data();
       }
+      toast.error("User data not found");
+      return null;
     } catch (error) {
-      console.error("Error fetching user data:", error.message);
-      toast.error("Error fetching user data!", {
-        position: "top-center",
-      });
+      toast.error("Error fetching user data!");
       return null;
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
-    // Validate input
     if (!email || !password) {
-      toast.error("Email and password are required!", {
-        position: "top-center",
-      });
+      toast.error("Email and password are required!");
+      setIsLoading(false);
       return;
     }
 
     try {
-      // Attempt login
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      // Fetch user data after login
-      const userData = await fetchUserData(user);
+      const userData = await fetchUserData(userCredential.user);
 
       if (userData) {
-        // Log and notify on successful login
-        console.log("User logged in successfully:", user);
-        toast.success("User logged in successfully!", {
-          position: "top-center",
-        });
-
-        // Check if college and leetcode fields are empty
-        if (!userData.college || !userData.leetcode) {
-          // Redirect to DataInput page if any field is empty
-          navigate("/datainput");
-        } else {
-          // Redirect to dashboard if both fields are filled
-          navigate("/dashboard");
-        }
+        toast.success("Login successful!");
+        navigate(!userData.college || !userData.leetcode ? "/datainput" : "/dashboard");
       }
-      // If no user data, toast will already show in fetchUserData function
     } catch (error) {
-      console.error("Login error:", error.message);
-      toast.error(error.message, {
-        position: "top-center",
-      });
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Password reset function
   const handlePasswordReset = async () => {
     if (!email) {
-      toast.error("Please enter your email address", {
-        position: "top-center",
-      });
+      toast.error("Please enter your email address");
       return;
     }
 
     try {
       await sendPasswordResetEmail(auth, email);
-      toast.success("Password reset email sent!\n Check your email", {
-        position: "top-center",
-      });
+      toast.success("Password reset email sent! Check your inbox");
     } catch (error) {
-      console.error("Error resetting password:", error.message);
-      toast.error("Error resetting password", {
-        position: "top-center",
-      });
+      toast.error("Error resetting password");
     }
   };
 
   return (
-    <>
-      <nav className="flex justify-between items-center p-4 bg-gray-700 shadow-md">
-        <div className="flex items-center">
-          <img
-            src='/logoCS.png'
-            alt="CoderStats Logo"
-            className="w-12 h-12 mr-3 rounded-full"
-          />
-          <span className="text-xl text-[30px] text-[#F8970D] font-bold">CoderStats</span>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 flex flex-col">
+      {/* Navbar */}
+      <nav className="bg-gray-800/50 backdrop-blur-lg border-b border-gray-700">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 md:h-20">
+            <div className="flex items-center space-x-2"
+            >
+              <img
+                src="/logoCS.png"
+                alt="CoderStats Logo"
+                className="w-14 h-14 rounded-full"
+              />
+              <span className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-orange-500 to-amber-500 bg-clip-text text-transparent">
+                CoderStats
+              </span>
+            </div>
+          </div>
         </div>
       </nav>
 
-      <div className="flex justify-center items-center min-h-screen bg-gray-900 text-white">
-        <form onSubmit={handleSubmit} className="w-full max-w-sm bg-gray-800 p-6 rounded-lg shadow-md">
-          <h3 className="text-2xl font-semibold mb-6 text-center text-blue-400">Login</h3>
-
-          <div className="mb-4">
-            <label className="block text-gray-300">Email address</label>
-            <input
-              type="email"
-              className="w-full p-2 border border-gray-600 rounded mt-2 bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+      {/* Main Content */}
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        <div className="w-full max-w-sm sm:max-w-md bg-gray-800/50 backdrop-blur-lg border border-gray-700 rounded-lg p-4 sm:p-6 md:p-8">
+          <div className="text-center mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-white">Welcome back</h2>
+            <p className="text-sm sm:text-base text-gray-400 mt-2">Sign in to your account to continue</p>
           </div>
 
-          <div className="mb-4">
-            <label className="block text-gray-300">Password</label>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"} // Toggle between password and text
-                className="w-full p-2 border border-gray-600 rounded mt-2 bg-gray-700 text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-              >
-                {showPassword ? (
-                  <AiOutlineEyeInvisible size={24} /> // Hidden password icon
-                ) : (
-                  <AiOutlineEye size={24} /> // Visible password icon
-                )}
-              </button>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-sm font-medium text-gray-200">
+                Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  className="w-full pl-10 pr-4 py-2 sm:py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm sm:text-base"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="mb-6">
+            <div className="space-y-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-200">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  className="w-full pl-10 pr-12 py-2 sm:py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm sm:text-base"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+            </div>
+
             <button
               type="submit"
-              className="w-full bg-green-500 text-black p-2 rounded hover:bg-green-600 transition-colors duration-200"
+              className="w-full py-2 sm:py-3 px-4 bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white rounded-lg font-medium transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+              disabled={isLoading}
             >
-              Login
+              {isLoading ? "Signing in..." : "Sign in"}
             </button>
-          </div>
 
-          <p className="text-center text-sm text-gray-400">
-            Don't have an account? <a href="/register" className="text-blue-500">Sign up</a>
-          </p>
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-600" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-gray-800 text-gray-400">
+                  Or continue with
+                </span>
+              </div>
+            </div>
 
-          {/* Forgot Password link */}
-          <p className="text-center text-sm text-gray-400 mt-2">
-            Forgot your password? <button onClick={handlePasswordReset} className="text-yellow-500">Reset it here</button>
-          </p>
+            <SignInwithGoogle />
 
-          <SignInwithGoogle />
-        </form>
+            <div className="text-center space-y-2">
+              <button
+                type="button"
+                onClick={handlePasswordReset}
+                className="text-xs sm:text-sm text-amber-400 hover:text-amber-300"
+              >
+                Forgot your password?
+              </button>
+              <p className="text-xs sm:text-sm text-gray-400">
+                Don't have an account?{" "}
+                <a
+                  href="/register"
+                  className="text-amber-400 hover:text-amber-300"
+                >
+                  Sign up
+                </a>
+              </p>
+            </div>
+          </form>
+        </div>
       </div>
-    </>
+    </div>
   );
-}
+};
 
 export default Login;

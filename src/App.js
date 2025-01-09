@@ -2,13 +2,13 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import NavBar from './Component/NavBar';
 import Footer from './Component/Footer';
-import Dashboard from './Component/Dashboard';
-import LeetCodeStats from './Component/LeetCodeStats';
-import GFGStats from './Component/GFGStats';
 import Login from './Component/Login';
 import Register from './Component/Register';
 import DataInput from './Component/DataInput';
-import CodeForcesStats from './Component/CodeForcesStats';
+import Dashboard from './Component/dashboard/Dashboard';
+import LeetCodeStats from './Component/leetcode/LeetCodeStats';
+import GFGStats from './Component/gfg/GFGStats';
+import CodeForcesStats from './Component/codeforces/CodeForcesStats';
 
 const App = () => {
   const location = useLocation(); // Get the current route
@@ -21,7 +21,7 @@ const App = () => {
     <>
       {isNavBarVisible && <NavBar />}
       
-      <div style={{ padding: '20px' }}>
+      <div>
         <Routes>
           {/* Redirect from home to login */}
           <Route path="/" element={<Navigate to="/login" />} />
