@@ -168,7 +168,7 @@ const Login = () => {
               <button
                 type="button"
                 onClick={handlePasswordReset}
-                className="text-xs sm:text-sm text-amber-400 hover:text-amber-300"
+                className="text-xs sm:text-sm text-red-500 hover:text-red-600"
               >
                 Forgot your password?
               </button>

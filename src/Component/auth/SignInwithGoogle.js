@@ -3,7 +3,7 @@ import { auth, db } from "../auth/Firebase";
 import { toast } from "react-toastify";
 import { setDoc, doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import googleLogo from "../../assets/google.png";
+import googleLogo from "../../assets/google.webp";
 
 function SignInwithGoogle() {
   const navigate = useNavigate(); // Initialize navigate for routing
@@ -61,17 +61,16 @@ function SignInwithGoogle() {
 
   return (
     <div className="text-center mt-4">
-      <p className="text-gray-700 mb-2">-- Or continue with --</p>
       <div
-        className="cursor-pointer mx-auto w-52 h-12 flex justify-center items-center bg-white border border-gray-300 rounded-lg"
+        className="cursor-pointer mx-auto w-52 h-12 flex justify-center items-center bg-[#4169e1] border border-gray-300 rounded-lg hover:bg-[#3752b1]"
         onClick={googleLogin}
       >
         <img
-          src={googleLogo} // Use imported Google logo here
+          src={googleLogo}
           alt="Google Logo"
-          className="object-contain w-6 h-6 mr-2"
+          className="object-contain bg-white w-8 h-8 mr-2 rounded-full"
         />
-        <span className="text-gray-700 font-medium">Sign in with Google</span>
+        <span className="text-white font-medium">Sign in with Google</span>
       </div>
     </div>
   );
