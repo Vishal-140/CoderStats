@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { auth, db } from '../Firebase';
+import { auth, db } from '../auth/Firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import axios from 'axios';
-import API from '../API';
+import API from '../auth/API';
 import ProfileCard from '../ProfileCard';
-import NavigationCard from '../NavigationCard';
 import CalendarCard from '../CalendarCard';
 import ProblemsCard from './ProblemsCard';
 import RankingsCard from './RankingCard';
 import ContestRatingsCard from './ContestRatingsCard';
 import DifficultyBreakdownCard from './DifficultyBreakdownCard';
+import NavigationCard from '../NavigationCard';
 
 
 const Dashboard = () => {
@@ -113,13 +113,13 @@ const Dashboard = () => {
               error={platformErrors.leetcode}
               loading={loading}
             />
-            <NavigationCard />
             <ContestRatingsCard
               platformData={platformData}
               usernames={usernames}
               loading={loading}
               platformErrors={platformErrors}
             />
+            <NavigationCard/>
           </div>
 
           <div className="flex-1 space-y-4">

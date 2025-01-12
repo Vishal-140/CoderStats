@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { auth, db } from './Firebase';
+import { auth, db } from './auth/Firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { onAuthStateChanged, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { Link, useNavigate } from 'react-router-dom';

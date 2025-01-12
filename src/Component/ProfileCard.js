@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { auth, db } from "./Firebase";
+import { auth, db } from "./auth/Firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import editPencil from "../assets/editpencil.svg"; // Correct path to the SVG

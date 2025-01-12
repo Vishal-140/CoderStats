@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { auth, db } from "../Firebase";
+import { auth, db } from "../auth/Firebase";
 import { doc, getDoc } from "firebase/firestore";
-import API from '../API';
+import API from '../auth/API';
 import ProfileCard from '../ProfileCard';
-import NavigationCard from '../NavigationCard';
 import RecentSubmissions from './RecentSubmissions';
 import SubmissionStats from './SubmissionStats';
 import CalendarCard from '../CalendarCard';
 import StatsSummaryCard from './StatsSummaryCard';
 import DifficultyStatsCard from './DifficultyStatsCard';
+import NavigationCard from '../NavigationCard';
 
 
 const LeetCodeStats = () => {
@@ -100,7 +100,7 @@ const LeetCodeStats = () => {
         <div className="flex flex-col lg:flex-row lg:space-x-6">
           <div className="w-full lg:w-1/4 space-y-6">
             <ProfileCard stats={stats || defaultStats} username={username || 'NA'} />
-            <NavigationCard />
+            <NavigationCard/>
           </div>
 
           <div className="flex-1 space-y-6">

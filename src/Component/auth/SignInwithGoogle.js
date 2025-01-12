@@ -1,12 +1,12 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth, db } from "./Firebase";
+import { auth, db } from "../auth/Firebase";
 import { toast } from "react-toastify";
 import { setDoc, doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import googleLogo from "../google.png"; // Import the image directly
+import googleLogo from "../../assets/google.png";
 
 function SignInwithGoogle() {
-  const navigate = useNavigate();  // Initialize navigate for routing
+  const navigate = useNavigate(); // Initialize navigate for routing
 
   async function googleLogin() {
     const provider = new GoogleAuthProvider();
@@ -41,9 +41,9 @@ function SignInwithGoogle() {
           // Fetch user data to check if 'college' and 'leetcode' are empty
           const userData = userDoc.data();
           if (!userData?.college || !userData?.leetcode) {
-            navigate("/datainput");  // Redirect to data input page if empty
+            navigate("/datainput"); // Redirect to data input page if empty
           } else {
-            navigate("/dashboard");  // Redirect to dashboard if both fields are filled
+            navigate("/dashboard"); // Redirect to dashboard if both fields are filled
           }
 
           toast.success("User logged in successfully", {
@@ -63,14 +63,15 @@ function SignInwithGoogle() {
     <div className="text-center mt-4">
       <p className="text-gray-700 mb-2">-- Or continue with --</p>
       <div
-        className="cursor-pointer mx-auto w-52 h-12 flex justify-center items-center bg-white border-gray-300"
+        className="cursor-pointer mx-auto w-52 h-12 flex justify-center items-center bg-white border border-gray-300 rounded-lg"
         onClick={googleLogin}
       >
         <img
-          src={googleLogo} // Use imported google logo here
+          src={googleLogo} // Use imported Google logo here
           alt="Google Logo"
-          className="object-contain"
+          className="object-contain w-6 h-6 mr-2"
         />
+        <span className="text-gray-700 font-medium">Sign in with Google</span>
       </div>
     </div>
   );

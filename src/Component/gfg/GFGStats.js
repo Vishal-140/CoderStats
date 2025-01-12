@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { auth, db } from '../Firebase';
+import { auth, db } from '../auth/Firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import API from '../API';
+import API from '../auth/API';
 import ProfileCard from '../ProfileCard';
 import CalendarCard from '../CalendarCard';
 import DifficultyBreakdown from './DifficultyBreakdown';
+import NavigationCard from '../NavigationCard';
 
 const GFGStats = () => {
   const [data, setData] = useState(null);
@@ -105,7 +106,7 @@ const GFGStats = () => {
               error={error}
               loading={loading}
             />
-            <DifficultyBreakdown stats={stats} />
+            <NavigationCard/>
           </div>
 
           <div className="flex-1 space-y-4">
@@ -123,6 +124,7 @@ const GFGStats = () => {
               {renderMetricsCard('Contest Rating', stats.contestRating)}
               {renderMetricsCard('Submissions', stats.codingStats.submissions)}
             </div>
+            <DifficultyBreakdown stats={stats} />
           </div>
         </div>
       </div>
