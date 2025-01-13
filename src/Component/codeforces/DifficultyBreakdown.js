@@ -1,42 +1,55 @@
 import React from "react";
-import { BarChart2 } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart2 } from "react-feather";
 
-const SubmissionDistribution = ({ submissions }) => {
-  const getVerdict = (submissions) => {
-    const verdicts = submissions.reduce((acc, sub) => {
-      acc[sub.verdict] = (acc[sub.verdict] || 0) + 1;
-      return acc;
-    }, {});
+const DifficultyBreakdown = ({ submissions }) => {
+  // Calculate difficulty breakdown
+  const calculateDifficulty = (submissionsData) => {
+    const difficultyCounts = { easy: 0, medium: 0, hard: 0 };
+    const solvedProblems = new Set();
 
-    return [
-      { name: "Accepted", value: verdicts.OK || 0, color: "#22C55E" },
-      {
-        name: "Wrong Answer",
-        value: verdicts.WRONG_ANSWER || 0,
-        color: "#EF4444",
-      },
-      {
-        name: "Time Limit",
-        value: verdicts.TIME_LIMIT_EXCEEDED || 0,
-        color: "#F59E0B",
-      },
-    ];
+    submissionsData.forEach((submission) => {
+      if (submission.verdict === "OK") {
+        const { contestId, index, rating } = submission.problem;
+        const problemId = `${contestId}-${index}`;
+
+        if (!solvedProblems.has(problemId)) {
+          solvedProblems.add(problemId);
+
+          if (rating >= 800 && rating <= 1200) {
+            difficultyCounts.easy += 1;
+          } else if (rating >= 1300 && rating <= 2000) {
+            difficultyCounts.medium += 1;
+          } else if (rating > 2000) {
+            difficultyCounts.hard += 1;
+          }
+        }
+      }
+    });
+
+    return difficultyCounts;
   };
 
-  const verdictData = getVerdict(submissions);
+  const difficultyCounts = calculateDifficulty(submissions);
+  const totalSubmissions =
+    difficultyCounts.easy + difficultyCounts.medium + difficultyCounts.hard;
+
+  const difficultyData = [
+    { name: "Easy", value: difficultyCounts.easy, color: "#34D399" },
+    { name: "Medium", value: difficultyCounts.medium, color: "#FBBF24" },
+    { name: "Hard", value: difficultyCounts.hard, color: "#F87171" },
+  ];
 
   return (
     <div className="bg-[#374151] p-6 rounded-lg">
       <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
         <BarChart2 className="text-green-500" />
-        Submission Distribution
+        Difficulty Breakdown
       </h3>
       <div className="grid grid-row-2 gap-4">
         {/* Progress Bars */}
         <div className="flex flex-col justify-center">
-          {verdictData.map((entry, index) => {
-            const totalSubmissions = submissions.length;
+          {difficultyData.map((entry, index) => {
             const percentage =
               totalSubmissions > 0
                 ? ((entry.value / totalSubmissions) * 100).toFixed(1)
@@ -65,7 +78,7 @@ const SubmissionDistribution = ({ submissions }) => {
                   />
                 </div>
                 <div className="text-sm text-gray-400">
-                  {entry.value} submissions
+                  {entry.value} problems
                 </div>
               </div>
             );
@@ -76,7 +89,7 @@ const SubmissionDistribution = ({ submissions }) => {
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={verdictData}
+                data={difficultyData}
                 cx="50%"
                 cy="50%"
                 innerRadius={50}
@@ -84,7 +97,7 @@ const SubmissionDistribution = ({ submissions }) => {
                 paddingAngle={5}
                 dataKey="value"
               >
-                {verdictData.map((entry, index) => (
+                {difficultyData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
               </Pie>
@@ -93,7 +106,7 @@ const SubmissionDistribution = ({ submissions }) => {
                   backgroundColor: "#ffffff",
                   border: "none",
                 }}
-                formatter={(value, name) => [`${value} submissions`, name]}
+                formatter={(value, name) => [`${value} problems`, name]}
               />
             </PieChart>
           </ResponsiveContainer>
@@ -103,4 +116,4 @@ const SubmissionDistribution = ({ submissions }) => {
   );
 };
 
-export default SubmissionDistribution;
+export default DifficultyBreakdown;

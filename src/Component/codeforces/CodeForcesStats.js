@@ -1,24 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { auth, db } from "../auth/Firebase";
 import { doc, getDoc } from "firebase/firestore";
 import API from '../auth/API';
 import ProfileCard from '../ProfileCard';
 import CalendarCard from '../CalendarCard';
-import SubmissionDistribution from './SubmissionDistribution';
 import RecentSubmissions from './RecentSubmissions';
 import RatingProgress from './RatingProgress';
+import DifficultyBreakdown from './DifficultyBreakdown';
 
 const defaultStats = {
-  handle: 'Loading...',
-  rank: 'Loading...',
-  maxRank: 'Loading...',
+  rank: 0,
   rating: 0,
   maxRating: 0,
   contribution: 0,
   totalSubmissions: 0,
   submissions: [],
-  ratingHistory: []
+  ratingHistory: [],
 };
 
 const CodeForcesStats = () => {
@@ -27,6 +25,7 @@ const CodeForcesStats = () => {
   const [ratingHistory, setRatingHistory] = useState([]);
   const [error, setError] = useState(null);
   const [username, setUsername] = useState(null);
+  const prevDataRef = useRef(null);  // This will store previous user data to optimize re-renders
 
   const calculateStats = (submissionsData) => {
     const solvedProblems = new Set(
@@ -48,11 +47,18 @@ const CodeForcesStats = () => {
       if (docSnap.exists()) {
         const cfUsername = docSnap.data().codeforces;
         setUsername(cfUsername);
+
+        // Check if data is the same to prevent unnecessary re-renders
+        if (prevDataRef.current === cfUsername) {
+          return;
+        }
+
+        prevDataRef.current = cfUsername;  // Update the reference with the new username
         
         const [userResponse, ratingResponse, submissionsResponse] = await Promise.all([
           axios.get(`${API.CodeforcesAPI}${cfUsername}`),
           axios.get(`https://codeforces.com/api/user.rating?handle=${cfUsername}`),
-          axios.get(`https://codeforces.com/api/user.status?handle=${cfUsername}`)
+          axios.get(`${API.CodeforcesStatusAPI}${cfUsername}`),
         ]);
 
         if (userResponse.data.status === 'FAILED') {
@@ -100,7 +106,7 @@ const CodeForcesStats = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-1 space-y-6">
             <ProfileCard userData={userData} username={username || 'Loading...'} />
-            <SubmissionDistribution submissions={submissions} />
+            <DifficultyBreakdown submissions={submissions} />
           </div>
 
           <div className="lg:col-span-3 space-y-6">

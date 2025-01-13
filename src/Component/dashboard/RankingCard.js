@@ -45,14 +45,14 @@ const RankingsCard = ({ platformData, usernames, loading, platformErrors }) => {
             <div className="flex justify-between items-center">
               <h3 className="text-md font-medium text-white">CodeForces</h3>
               <span className="px-2 py-0.5 bg-purple-500 rounded-full text-xs">
-                Rating
+                Global Rank
               </span>
             </div>
             {platformErrors.codeforces ? (
               <p className="text-red-400 text-sm mt-1">Error loading data</p>
             ) : (
               <p className="text-2xl font-bold text-white mt-1">
-                {loading ? '...' : platformData.codeforces?.rating || 'NA'}
+                {loading ? '...' : platformData.codeforces?.rank || 'NA'}
               </p>
             )}
           </div>
