@@ -6,10 +6,10 @@ const RatingProgress = ({ ratingHistory }) => {
   return (
     <div className="bg-[#374151] p-6 rounded-lg">
       <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-        <TrendingUp className="text-blue-500" />
+        <TrendingUp className="text-blue-500 w-4 h-4" />
         Rating Progress
       </h3>
-      <div className="h-64">
+      <div className="h-40">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={ratingHistory.slice(-10)}>
             <CartesianGrid strokeDasharray="3 3" stroke="#374151" />

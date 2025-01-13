@@ -32,9 +32,9 @@ const SubmissionDistribution = ({ submissions }) => {
         <BarChart2 className="text-green-500" />
         Submission Distribution
       </h3>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-row-2 gap-4">
         {/* Progress Bars */}
-        <div className="flex flex-col justify-center space-y-4">
+        <div className="flex flex-col justify-center">
           {verdictData.map((entry, index) => {
             const totalSubmissions = submissions.length;
             const percentage =
@@ -43,7 +43,7 @@ const SubmissionDistribution = ({ submissions }) => {
                 : 0;
 
             return (
-              <div key={index} className="space-y-1">
+              <div key={index} className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="flex items-center">
                     <div

@@ -4,157 +4,126 @@ import { auth, db } from "../auth/Firebase";
 import { doc, getDoc } from "firebase/firestore";
 import API from '../auth/API';
 import ProfileCard from '../ProfileCard';
-import NavigationCard from '../NavigationCard';
 import CalendarCard from '../CalendarCard';
-import PerformanceStats from './PerformanceStats';
-import ProblemStats from './ProblemStats';
-import RatingProgress from './RatingProgress';
 import SubmissionDistribution from './SubmissionDistribution';
 import RecentSubmissions from './RecentSubmissions';
+import RatingProgress from './RatingProgress';
+
+const defaultStats = {
+  handle: 'Loading...',
+  rank: 'Loading...',
+  maxRank: 'Loading...',
+  rating: 0,
+  maxRating: 0,
+  contribution: 0,
+  totalSubmissions: 0,
+  submissions: [],
+  ratingHistory: []
+};
 
 const CodeForcesStats = () => {
-  const [userData, setUserData] = useState(null);
+  const [userData, setUserData] = useState(defaultStats);
   const [submissions, setSubmissions] = useState([]);
   const [ratingHistory, setRatingHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [username, setUsername] = useState(null);
 
-  // Default states for all data
-  const defaultStats = {
-    handle: 'NA',
-    rank: 'NA',
-    maxRank: 'NA',
-    rating: 'NA',
-    maxRating: 'NA',
-    contribution: 'NA',
-    friendOfCount: 'NA',
-    lastOnline: 'NA',
-    registrationTime: 'NA',
-    totalSubmissions: 0,
-    acceptedSubmissions: 0,
-    wrongSubmissions: 0,
-    problemsSolved: 0,
-    contestsParticipated: 0,
-    submissions: [],
-    ratingHistory: [],
+  const calculateStats = (submissionsData) => {
+    const solvedProblems = new Set(
+      submissionsData?.filter(s => s.verdict === 'OK')?.map(s => s.problem.name)
+    ).size;
+
+    const successRate = submissionsData?.length > 0
+      ? ((submissionsData.filter(s => s.verdict === 'OK').length / submissionsData.length) * 100).toFixed(1)
+      : 0;
+
+    return { solvedProblems, successRate };
   };
 
-  // Fetch user data from Firestore
-  const fetchUserData = async (user) => {
+  const fetchData = async (user) => {
     try {
       const docRef = doc(db, "Users", user.uid);
       const docSnap = await getDoc(docRef);
+      
       if (docSnap.exists()) {
-        setUsername(docSnap.data().codeforces);
+        const cfUsername = docSnap.data().codeforces;
+        setUsername(cfUsername);
+        
+        const [userResponse, ratingResponse, submissionsResponse] = await Promise.all([
+          axios.get(`${API.CodeforcesAPI}${cfUsername}`),
+          axios.get(`https://codeforces.com/api/user.rating?handle=${cfUsername}`),
+          axios.get(`https://codeforces.com/api/user.status?handle=${cfUsername}`)
+        ]);
+
+        if (userResponse.data.status === 'FAILED') {
+          throw new Error(userResponse.data.comment || 'Failed to fetch user data');
+        }
+
+        setUserData(userResponse.data.result[0]);
+        setRatingHistory(ratingResponse.data.result.map(entry => ({
+          contestName: entry.contestName,
+          rating: entry.newRating,
+          rank: entry.rank,
+          timeSeconds: entry.ratingUpdateTimeSeconds
+        })));
+        setSubmissions(submissionsResponse.data.result);
       }
-    } catch (error) {
-      console.error("Error fetching user data from Firestore:", error.message);
-    }
-  };
-
-  // Fetch stats from CodeForces API
-  const fetchStats = async () => {
-    if (!username) return;
-    
-    setLoading(true);
-    setError(null);
-
-    try {
-      // Fetch user info
-      const userResponse = await axios.get(`${API.CodeforcesAPI}${username}`);
-      if (userResponse.data.status === 'FAILED') {
-        throw new Error(userResponse.data.comment || 'Failed to fetch user data');
-      }
-      setUserData(userResponse.data.result[0]);
-
-      // Fetch rating history
-      const ratingResponse = await axios.get(`https://codeforces.com/api/user.rating?handle=${username}`);
-      const ratingData = ratingResponse.data.result.map(entry => ({
-        contestName: entry.contestName,
-        rating: entry.newRating,
-        rank: entry.rank,
-        timeSeconds: entry.ratingUpdateTimeSeconds
-      }));
-      setRatingHistory(ratingData);
-
-      // Fetch submissions
-      const submissionsResponse = await axios.get(`https://codeforces.com/api/user.status?handle=${username}`);
-      const submissionsData = submissionsResponse.data.result;
-      setSubmissions(submissionsData);
-
     } catch (err) {
-      console.error('Error Fetching CodeForces Data:', err);
+      console.error('Error fetching data:', err);
       setError('Error fetching CodeForces data.');
-    } finally {
-      setLoading(false);
     }
   };
 
-  // Auth listener effect
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) fetchUserData(user);
+      if (user) fetchData(user);
     });
-
     return () => unsubscribe();
   }, []);
 
-  // Fetch stats when username changes
-  useEffect(() => {
-    if (username) fetchStats();
-  }, [username]);
+  const { solvedProblems, successRate } = calculateStats(submissions);
+
+  const StatCard = ({ title, value, className = "" }) => (
+    <div className={`bg-gray-700 p-4 rounded-lg shadow ${className}`}>
+      <div className="text-lg md:text-xl">{title}</div>
+      <p className="text-2xl md:text-4xl font-bold mt-2">{value}</p>
+    </div>
+  );
 
   return (
-    <div className="max-w-7xl mx-auto p-6 mt-20 bg-gray-800 text-white shadow-lg rounded-lg">
-      <h1 className="text-3xl font-bold text-center mb-8">CodeForces Stats</h1>
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 mt-20 bg-gray-800 text-white shadow-lg rounded-lg">
+      <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8">CodeForces Stats</h1>
 
       {error && <div className="text-center text-red-500 mb-6">{error}</div>}
 
       <div className="flex flex-col space-y-6">
-        <div className="flex flex-col lg:flex-row lg:space-x-6">
-          {/* Left Column */}
-          <div className="w-full lg:w-1/4 space-y-6">
-            <ProfileCard 
-              userData={userData || defaultStats}
-              username={username || 'NA'}
-            />
-            <NavigationCard />
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="lg:col-span-1 space-y-6">
+            <ProfileCard userData={userData} username={username || 'Loading...'} />
+            <SubmissionDistribution submissions={submissions} />
           </div>
 
-          {/* Main Content */}
-          <div className="flex-1 space-y-6">
+          <div className="lg:col-span-3 space-y-6">
             <CalendarCard />
             
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <ProblemStats 
-                submissions={submissions || defaultStats.submissions}
-              />
-              
-              <SubmissionDistribution 
-                submissions={submissions || defaultStats.submissions}
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <StatCard title="Total Solved" value={solvedProblems} />
+              <StatCard title="Global Rank" value={userData?.rank || 'Loading...'} />
+              <StatCard title="Total Submissions" value={submissions.length || 0} />
             </div>
 
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <PerformanceStats 
-                userData={userData || defaultStats}
-                ratingHistory={ratingHistory || defaultStats.ratingHistory}
-              />
-              <RatingProgress 
-                ratingHistory={ratingHistory || defaultStats.ratingHistory}
-              />
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <StatCard title="Contribution" value={userData?.contribution || 0} />
+              <StatCard title="Success Rate" value={`${successRate}%`} />
+              <StatCard title="Max Rating" value={userData?.maxRating || 0} />
+              <StatCard title="Contest Rating" value={userData?.rating || 0} />
             </div>
+
+            <RatingProgress ratingHistory={ratingHistory} />
           </div>
-
-          
         </div>
 
-        <RecentSubmissions 
-          submissions={submissions || defaultStats.submissions}
-        />
+        <RecentSubmissions submissions={submissions} />
       </div>
     </div>
   );
