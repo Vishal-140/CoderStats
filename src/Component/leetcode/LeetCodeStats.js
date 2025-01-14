@@ -11,7 +11,6 @@ import StatsSummaryCard from './StatsSummaryCard';
 import DifficultyStatsCard from './DifficultyStatsCard';
 import NavigationCard from '../NavigationCard';
 
-
 const LeetCodeStats = () => {
   const [stats, setStats] = useState(null);
   const [calendarData, setCalendarData] = useState({});
@@ -35,7 +34,6 @@ const LeetCodeStats = () => {
     recentSubmissions: [],
   };
 
-  // Fetch user data from Firestore
   const fetchUserData = async (user) => {
     try {
       const docRef = doc(db, "Users", user.uid);
@@ -48,7 +46,6 @@ const LeetCodeStats = () => {
     }
   };
 
-  // Fetch stats from the LeetCode API
   const fetchStats = async () => {
     if (!username) return;
     
@@ -81,7 +78,6 @@ const LeetCodeStats = () => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) fetchUserData(user);
     });
-
     return () => unsubscribe();
   }, []);
 
@@ -89,46 +85,60 @@ const LeetCodeStats = () => {
     if (username) fetchStats();
   }, [username]);
 
-  // Show components with default values when loading
   return (
-    <div className="max-w-7xl mx-auto p-6 mt-20 bg-gray-800 text-white shadow-lg rounded-lg">
-      <h1 className="text-3xl font-bold text-center ">LeetCode Stats</h1>
+    <div className="max-w-7xl mx-auto p-2 sm:p-4 md:p-6 mt-20 bg-gray-800 text-white shadow-lg rounded-lg">
+      <h1 className="text-2xl sm:text-3xl font-bold text-center mb-4 sm:mb-6">LeetCode Stats</h1>
 
-      {error && <div className="text-center text-red-500">{error}</div>}
+      {error && <div className="text-center text-red-500 mb-4">{error}</div>}
 
-      <div className="flex flex-col space-y-6">
-        <div className="flex flex-col lg:flex-row lg:space-x-6">
-          <div className="w-full lg:w-1/4 space-y-6">
-            <ProfileCard stats={stats || defaultStats} username={username || 'NA'} />
-            <NavigationCard/>
+      <div className="flex flex-col space-y-4 sm:space-y-6">
+        <div className="flex flex-col lg:flex-row lg:space-x-4 xl:space-x-6">
+          {/* Left Column */}
+          <div className="w-full lg:w-1/4 space-y-4 sm:space-y-6">
+            <div className="overflow-hidden">
+              <ProfileCard stats={stats || defaultStats} username={username || 'NA'} />
+            </div>
+            <div className="overflow-hidden">
+                  <SubmissionStats 
+                    totalSubmissions={stats?.totalSubmissions || defaultStats.totalSubmissions} 
+                  />
+                </div>
           </div>
 
-          <div className="flex-1 space-y-6">
-            <CalendarCard calendarData={calendarData || {}} />
-            <div className="flex flex-col lg:flex-row justify-between space-y-6 lg:space-y-0 lg:space-x-6">
-              <StatsSummaryCard
-                totalSolved={stats?.totalSolved || defaultStats.totalSolved}
-                totalActiveDays={stats?.totalActiveDays || defaultStats.totalActiveDays}
-                ranking={stats?.ranking || defaultStats.ranking}
-                contributionPoint={stats?.contributionPoint || defaultStats.contributionPoint}
-                reputation={stats?.reputation || defaultStats.reputation}
-              />
-              <div className="w-full space-y-6">
-                <SubmissionStats totalSubmissions={stats?.totalSubmissions || defaultStats.totalSubmissions} />
-                <DifficultyStatsCard
-                  easySolved={stats?.easySolved || defaultStats.easySolved}
-                  totalEasy={stats?.totalEasy || defaultStats.totalEasy}
-                  mediumSolved={stats?.mediumSolved || defaultStats.mediumSolved}
-                  totalMedium={stats?.totalMedium || defaultStats.totalMedium}
-                  hardSolved={stats?.hardSolved || defaultStats.hardSolved}
-                  totalHard={stats?.totalHard || defaultStats.totalHard}
+          {/* Right Column */}
+          <div className="flex-1 space-y-4 sm:space-y-6">
+            <div className="overflow-hidden">
+              <CalendarCard calendarData={calendarData || {}} />
+            </div>
+            
+            {/* Stats Cards Row */}
+            <div className="flex flex-col lg:flex-row lg:space-x-4 xl:space-x-6 space-y-4 lg:space-y-0">
+              <div className="w-full lg:w-full overflow-hidden">
+                <StatsSummaryCard
+                  totalSolved={stats?.totalSolved || defaultStats.totalSolved}
+                  totalActiveDays={stats?.totalActiveDays || defaultStats.totalActiveDays}
+                  ranking={stats?.ranking || defaultStats.ranking}
+                  contributionPoint={stats?.contributionPoint || defaultStats.contributionPoint}
+                  reputation={stats?.reputation || defaultStats.reputation}
                 />
               </div>
+              
             </div>
+            <div className="overflow-hidden">
+                  <DifficultyStatsCard
+                    easySolved={stats?.easySolved || defaultStats.easySolved}
+                    totalEasy={stats?.totalEasy || defaultStats.totalEasy}
+                    mediumSolved={stats?.mediumSolved || defaultStats.mediumSolved}
+                    totalMedium={stats?.totalMedium || defaultStats.totalMedium}
+                    hardSolved={stats?.hardSolved || defaultStats.hardSolved}
+                    totalHard={stats?.totalHard || defaultStats.totalHard}
+                  />
+                </div>
           </div>
         </div>
 
-        <div className="w-full mt-6">
+        {/* Recent Submissions */}
+        <div className="w-full overflow-hidden">
           <RecentSubmissions
             recentSubmissions={stats?.recentSubmissions || defaultStats.recentSubmissions}
           />
