@@ -24,11 +24,11 @@ const DifficultyBreakdown = ({ stats }) => {
       <h2 className="text-lg font-semibold text-blue-300 mb-2">
         Problem Difficulty Breakdown
       </h2>
-
+  
       {/* Main Content: Progress Bars & Pie Chart */}
-      <div className="flex flex-col lg:flex-row lg:space-x-4 space-y-4 lg:space-y-0">
+      <div className="flex flex-col space-y-4">
         {/* Progress Bars */}
-        <div className="flex-1 space-y-2">
+        <div className="flex-1 space-y-2 p-4">
           {difficultyData.map((item, index) => {
             const percentage = ((item.value / totalProblems) * 100).toFixed(1);
             return (
@@ -52,9 +52,9 @@ const DifficultyBreakdown = ({ stats }) => {
             );
           })}
         </div>
-
+  
         {/* Pie Chart */}
-        <div className="flex-1 flex items-center justify-center h-40">
+        <div className="flex items-center justify-center h-40">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -88,23 +88,11 @@ const DifficultyBreakdown = ({ stats }) => {
                 }}
               />
             </PieChart>
-            {/* Legend*/}
-            <div className="hidden lg:flex flex-wrap justify-center gap-3 mt-2">
-              {difficultyData.map((item, index) => (
-                <div key={index} className="flex items-center">
-                  <div
-                    className="w-4 h-4 rounded-full mr-2"
-                    style={{ backgroundColor: item.color }}
-                  />
-                  <span className="text-xs">{item.name}</span>
-                </div>
-              ))}
-            </div>
           </ResponsiveContainer>
         </div>
       </div>
     </div>
-  );
+  );  
 };
 
 export default DifficultyBreakdown;

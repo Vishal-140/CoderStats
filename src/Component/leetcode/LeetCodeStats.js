@@ -9,7 +9,6 @@ import SubmissionStats from './SubmissionStats';
 import CalendarCard from '../CalendarCard';
 import StatsSummaryCard from './StatsSummaryCard';
 import DifficultyStatsCard from './DifficultyStatsCard';
-import NavigationCard from '../NavigationCard';
 
 const LeetCodeStats = () => {
   const [stats, setStats] = useState(null);
@@ -99,8 +98,13 @@ const LeetCodeStats = () => {
               <ProfileCard stats={stats || defaultStats} username={username || 'NA'} />
             </div>
             <div className="overflow-hidden">
-                  <SubmissionStats 
-                    totalSubmissions={stats?.totalSubmissions || defaultStats.totalSubmissions} 
+            <DifficultyStatsCard
+                    easySolved={stats?.easySolved || defaultStats.easySolved}
+                    totalEasy={stats?.totalEasy || defaultStats.totalEasy}
+                    mediumSolved={stats?.mediumSolved || defaultStats.mediumSolved}
+                    totalMedium={stats?.totalMedium || defaultStats.totalMedium}
+                    hardSolved={stats?.hardSolved || defaultStats.hardSolved}
+                    totalHard={stats?.totalHard || defaultStats.totalHard}
                   />
                 </div>
           </div>
@@ -125,13 +129,9 @@ const LeetCodeStats = () => {
               
             </div>
             <div className="overflow-hidden">
-                  <DifficultyStatsCard
-                    easySolved={stats?.easySolved || defaultStats.easySolved}
-                    totalEasy={stats?.totalEasy || defaultStats.totalEasy}
-                    mediumSolved={stats?.mediumSolved || defaultStats.mediumSolved}
-                    totalMedium={stats?.totalMedium || defaultStats.totalMedium}
-                    hardSolved={stats?.hardSolved || defaultStats.hardSolved}
-                    totalHard={stats?.totalHard || defaultStats.totalHard}
+                  
+                  <SubmissionStats 
+                    totalSubmissions={stats?.totalSubmissions || defaultStats.totalSubmissions} 
                   />
                 </div>
           </div>

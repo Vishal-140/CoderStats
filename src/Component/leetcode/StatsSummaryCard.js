@@ -13,7 +13,7 @@ const StatsSummaryCard = ({ totalSolved, totalActiveDays, ranking, contributionP
     {/* Ranking Card */}
     <div className="bg-gray-700 p-6 rounded-lg shadow-md w-full">
       <h3 className="text-base">Ranking</h3>
-      <p className="text-[50px] font-bold">{ranking}</p>
+      <p className="text-[40px] font-bold">{ranking}</p>
     </div>
 
     {/* Contribution Points Card */}

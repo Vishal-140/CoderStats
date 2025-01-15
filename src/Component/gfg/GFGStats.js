@@ -6,7 +6,6 @@ import API from '../auth/API';
 import ProfileCard from '../ProfileCard';
 import CalendarCard from '../CalendarCard';
 import DifficultyBreakdown from './DifficultyBreakdown';
-import NavigationCard from '../NavigationCard';
 
 const GFGStats = () => {
   const [data, setData] = useState(null);
@@ -106,7 +105,7 @@ const GFGStats = () => {
               error={error}
               loading={loading}
             />
-            <NavigationCard/>
+            <DifficultyBreakdown stats={stats} />
           </div>
 
           <div className="flex-1 space-y-4">
@@ -124,7 +123,7 @@ const GFGStats = () => {
               {renderMetricsCard('Contest Rating', stats.contestRating)}
               {renderMetricsCard('Submissions', stats.codingStats.submissions)}
             </div>
-            <DifficultyBreakdown stats={stats} />
+            
           </div>
         </div>
       </div>
