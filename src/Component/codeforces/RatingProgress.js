@@ -1,10 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { TrendingUp } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const RatingProgress = ({ ratingHistory }) => {
+const RatingProgress = () => {
+  const [ratingHistory, setRatingHistory] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRatingData = async () => {
+      try {
+        // Replace this API with the correct one for rating data
+        const response = await fetch('https://codeforces.com/api/user.rating?handle=tourist');
+        const data = await response.json();
+
+        if (data.status === 'OK') {
+          const ratings = data.result.map(item => ({
+            contestName: `Contest ${item.contestId}`, // Customize this if needed
+            rating: item.newRating
+          }));
+          setRatingHistory(ratings);
+        } else {
+          setError('Failed to fetch rating progress');
+        }
+      } catch (err) {
+        setError('Error fetching data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRatingData();
+  }, []);
+
+  if (loading) {
+    return <div className="text-center text-white">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-red-400">{error}</div>;
+  }
+
   return (
-    <div className="bg-[#374151] p-6 rounded-lg">
+    <div className="bg-[#374151] p-6 rounded-lg mb-8">
       <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
         <TrendingUp className="text-blue-500 w-4 h-4" />
         Rating Progress

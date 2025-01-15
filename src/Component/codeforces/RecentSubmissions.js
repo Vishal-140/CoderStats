@@ -1,40 +1,71 @@
-import React from 'react';
-import { Check } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 
-const RecentSubmissions = ({ submissions }) => {
+const RecentSubmissions = () => {
+  const [submissions, setSubmissions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchSubmissions = async () => {
+      try {
+        // Replace 'tourist' with the actual user handle.
+        const response = await fetch('https://codeforces.com/api/user.status?handle=tourist');
+        const data = await response.json();
+
+        if (data.status === 'OK') {
+          const recentSubmissions = data.result.map(submission => ({
+            problem: {
+              name: submission.problem.name
+            },
+            programmingLanguage: submission.programmingLanguage,
+            verdict: submission.verdict
+          }));
+          setSubmissions(recentSubmissions);
+        } else {
+          setError('Failed to fetch submissions');
+        }
+      } catch (err) {
+        setError('Error fetching data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSubmissions();
+  }, []);
+
+  if (loading) {
+    return <div className="text-center text-white">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-red-400">{error}</div>;
+  }
+
   return (
-    <div className="bg-gray-700 p-6 rounded-lg">
-      <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-        <Check className="text-green-500" />
-        Recent Submissions
-      </h3>
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="text-left border-b border-gray-500">
-              <th className="pb-3">Problem</th>
-              <th className="pb-3">Verdict</th>
-              <th className="pb-3">Language</th>
-              <th className="pb-3">Time</th>
-            </tr>
-          </thead>
-          <tbody>
-            {submissions.slice(0, 5).map((submission, index) => (
-              <tr key={index} className="border-b border-gray-500">
-                <td className="py-3">{submission.problem.name}</td>
-                <td className={`py-3 ${
-                  submission.verdict === 'OK' ? 'text-green-500' : 'text-red-500'
-                }`}>
-                  {submission.verdict}
-                </td>
-                <td className="py-3">{submission.programmingLanguage}</td>
-                <td className="py-3">
-                  {new Date(submission.creationTimeSeconds * 1000).toLocaleDateString()}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="bg-[#374151] rounded-lg shadow p-4">
+      <h2 className="text-xl font-semibold mb-4">Recent Submissions</h2>
+      <div className="space-y-2">
+        {submissions.slice(0, 10).map((submission, index) => (
+          <div 
+            key={index}
+            className="flex justify-between items-center p-3 bg-gray-700 rounded hover:bg-gray-600"
+          >
+            <div>
+              <span className="font-medium">{submission.problem.name}</span>
+              <span className="ml-2 text-sm text-gray-300">
+                ({submission.programmingLanguage})
+              </span>
+            </div>
+            <span className={`px-3 py-1 rounded ${
+              submission.verdict === 'OK' 
+                ? 'bg-green-900 text-green-200' 
+                : 'bg-red-900 text-red-200'
+            }`}>
+              {submission.verdict}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
