@@ -95,7 +95,7 @@ const ProblemDifficultyBreakdown = () => {
               totalSubmissions > 0
                 ? ((entry.value / totalSubmissions) * 100).toFixed(1)
                 : 0;
-
+  
             return (
               <div key={index} className="space-y-2">
                 <div className="flex justify-between text-sm">
@@ -126,7 +126,7 @@ const ProblemDifficultyBreakdown = () => {
           })}
         </div>
         {/* Pie Chart */}
-        <div className="h-64">
+        <div className="h-48"> {/* Reduced the height here */}
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -155,6 +155,7 @@ const ProblemDifficultyBreakdown = () => {
       </div>
     </div>
   );
+  
 };
 
 export default ProblemDifficultyBreakdown;

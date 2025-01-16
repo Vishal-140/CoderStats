@@ -16,41 +16,47 @@ const ProblemsCard = ({ platformData, usernames, loading, platformErrors }) => {
   };
 
   return (
-    <div className="bg-gray-700 p-4 rounded-lg shadow-md">
-      {/* Problems Solved Card */}
-      <h2 className="text-lg font-semibold text-blue-300 mb-3">
+    <div className="bg-gray-700 p-6 rounded-xl h-full">
+      <h2 className="text-2xl font-semibold text-blue-300 mb-6">
         Problems Solved
       </h2>
-      <div className="flex flex-col space-y-3">
-        <div className="p-4 bg-blue-600 rounded-lg text-center">
-          <h3 className="text-xl font-medium mb-1">Total Problems Solved</h3>
-          <p className="text-3xl font-bold">{getTotalProblems()}</p>
-        </div>
-        <div className="grid grid-cols-1 gap-2">
+      <div className="flex flex-col sm:flex-row gap-4">
+        {/* Left side - Platform Data */}
+        <div className="flex-1 flex flex-col space-y-4">
           {usernames.leetcode && (
-            <div className="flex justify-between items-center p-3 bg-gray-600 rounded-lg">
-              <h3 className="text-md font-medium">LeetCode</h3>
-              <p className="text-xl font-bold">
+            <div className="flex justify-between items-center p-4 bg-yellow-700 rounded-lg">
+              <h3 className="text-xl text-white font-medium">LeetCode</h3>
+              <p className="text-3xl text-white font-bold">
                 {platformData.leetcode?.totalSolved || "0"}
               </p>
             </div>
           )}
           {usernames.gfg && (
-            <div className="flex justify-between items-center p-3 bg-gray-600 rounded-lg">
-              <h3 className="text-md font-medium">GeeksForGeeks</h3>
-              <p className="text-xl font-bold">
+            <div className="flex justify-between items-center p-4 bg-green-800 rounded-lg">
+              <h3 className="text-xl text-white font-medium">GeeksForGeeks</h3>
+              <p className="text-3xl text-white font-bold ml-3">
                 {platformData.gfg?.codingStats?.problemsSolved || "0"}
               </p>
             </div>
           )}
           {usernames.codeforces && (
-            <div className="flex justify-between items-center p-3 bg-gray-600 rounded-lg">
-              <h3 className="text-md font-medium">CodeForces</h3>
-              <p className="text-xl font-bold">
+            <div className="flex justify-between items-center p-4 bg-[#1a518c] rounded-lg">
+              <h3 className="text-xl text-white font-medium">CodeForces</h3>
+              <p className="text-3xl text-white font-bold">
                 {platformData.codeforces?.problemCount || "0"}
               </p>
             </div>
           )}
+        </div>
+
+        {/* Right side - Total Problems */}
+        <div className="flex-1 flex items-center justify-center mt-6 sm:mt-0">
+          <div className="w-full h-fit p-6 bg-blue-600 rounded-xl text-center">
+            <h3 className="text-xl text-white font-medium mb-2">
+              Total Problems<br />Solved
+            </h3>
+            <p className="text-4xl text-white font-bold">{getTotalProblems()}</p>
+          </div>
         </div>
       </div>
     </div>

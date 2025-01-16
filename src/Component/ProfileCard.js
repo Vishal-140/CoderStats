@@ -63,7 +63,7 @@ const ProfileCard = () => {
     : profileData.github ? `https://${profileData.github}` : null;
 
   return (
-    <div className="bg-gray-700 p-4 rounded-lg shadow-md flex flex-col items-center space-y-4 max-w-xs mx-auto relative">
+    <div className="bg-gray-700 p-4 rounded-lg shadow-md flex flex-col items-center space-y-4 max-w-xs mx-auto relative sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
       {/* Pencil Icon in Top-Right */}
       <button
         onClick={() => navigate("/datainput")}
@@ -81,44 +81,55 @@ const ProfileCard = () => {
       <img
         src={profileData.photo}
         alt="Profile"
-        className="w-24 h-24 rounded-full border object-cover"
+        className="w-24 h-24 rounded-full border object-cover md:w-32 md:h-32 lg:w-40 lg:h-40"
       />
 
       {/* Full name display (First, Middle, Last name in the same line) */}
-      <h3 className="text-lg font-semibold">
+      <h3 className="text-lg font-bold text-center sm:text-xl md:text-xl lg:text-xl">
         {profileData.firstName} {profileData.middleName} {profileData.lastName}
       </h3>
 
-      <p className="text-sm">
+      <p className="text-sm sm:text-base">
         <strong>College:</strong> {profileData.college}
       </p>
       
-      <p className="text-sm">
+      <p className="text-sm sm:text-base">
         <strong>Country:</strong> {profileData.country}
       </p>
       
-      <div className="flex space-x-3 mt-2 text-sm">
-        {linkedinURL && (
-          <a
-            href={linkedinURL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:text-blue-600"
-          >
-            LinkedIn
-          </a>
-        )}
-        {githubURL && (
-          <a
-            href={githubURL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-gray-400 hover:text-gray-500"
-          >
-            GitHub
-          </a>
-        )}
-      </div>
+      <div className="flex space-x-3 mt-2 text-sm sm:text-base justify-center">
+  {linkedinURL && (
+    <a
+      href={linkedinURL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex flex-col items-center text-blue-500 hover:text-blue-600"
+    >
+      <img
+        src="/linkedinLogo.png"
+        alt="LinkedIn Logo"
+        className="w-6 h-6 mb-2"
+      />
+      LinkedIn
+    </a>
+  )}
+  {githubURL && (
+    <a
+      href={githubURL}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex flex-col items-center text-gray-400 hover:text-gray-500"
+    >
+      <img
+        src="/githubLogo.png"
+        alt="GitHub Logo"
+        className="w-6 h-6 mb-2"
+      />
+      GitHub
+    </a>
+  )}
+</div>
+
     </div>
   );
 };

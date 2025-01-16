@@ -9,7 +9,7 @@ import ProblemsCard from './ProblemsCard';
 import RankingsCard from './RankingCard';
 import ContestRatingsCard from './ContestRatingsCard';
 import DifficultyBreakdownCard from './DifficultyBreakdownCard';
-import NavigationCard from '../NavigationCard';
+import PlateformRedirect from '../PlateformRedirect';
 
 
 const Dashboard = () => {
@@ -119,7 +119,8 @@ const Dashboard = () => {
               loading={loading}
               platformErrors={platformErrors}
             />
-            <NavigationCard/>
+            <PlateformRedirect usernames={usernames} />
+
           </div>
 
           <div className="flex-1 space-y-4">
