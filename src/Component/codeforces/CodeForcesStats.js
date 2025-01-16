@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { Loader2 } from "lucide-react";
 import ProblemDifficultyBreakdown from "./ProblemDifficultyBreakdown";
 import RatingComponent from "./RatingComponent";
 import TotalProblemSolved from "./TotalProblemSolved";
