@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { BarChart2 } from 'lucide-react';
+import { auth, db } from "../auth/Firebase";
+import { doc, getDoc } from "firebase/firestore";
+import API from '../auth/API';
+import axios from 'axios';
 
 const ProblemDifficultyBreakdown = () => {
   const [difficultyBreakdown, setDifficultyBreakdown] = useState({
@@ -11,34 +15,104 @@ const ProblemDifficultyBreakdown = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [username, setUsername] = useState('');
+  const [calendarData, setCalendarData] = useState({});
+  const [stats, setStats] = useState(null);
+
+  const fetchUserData = async (user) => {
+    try {
+      const docRef = doc(db, "Users", user.uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setUsername(docSnap.data().codeforces);
+      }
+    } catch (error) {
+      console.error("Error fetching user data from Firestore:", error.message);
+    }
+  };
+
+  const fetchStats = async () => {
+    if (!username) return;
+    
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data } = await axios.get(`${API.CodeforcesStatusAPI}${username}`);
+      
+      if (!data || !data.result) {
+        setError('No data available');
+        setLoading(false);
+        return;
+      }
+
+      setStats(data);
+      calculateProblemDifficultyBreakdown(data.result);
+
+      if (data.submissionCalendar) {
+        const sixMonthsAgo = Date.now() - 180 * 24 * 60 * 60 * 1000;
+        const filteredCalendarData = {};
+        
+        Object.entries(data.submissionCalendar).forEach(([timestamp, count]) => {
+          const ts = parseInt(timestamp) * 1000;
+          if (ts > sixMonthsAgo) {
+            filteredCalendarData[timestamp] = count;
+          }
+        });
+        
+        setCalendarData(filteredCalendarData);
+      }
+    } catch (err) {
+      console.error('Error Fetching Codeforces Data:', err);
+      setError('Error fetching Codeforces data.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const submissionsResponse = await fetch(
-          'https://codeforces.com/api/user.status?handle=tourist&from=1&count=1000'
-        );
-        const submissionsData = await submissionsResponse.json();
+    if (username) {
+      fetchStats();
+    }
+  }, [username]);
 
-        if (submissionsData.status === 'OK') {
-          calculateProblemDifficultyBreakdown(submissionsData.result);
+  useEffect(() => {
+    const fetchUserAndData = async () => {
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          setError('User not authenticated');
+          setLoading(false);
+          return;
         }
+
+        await fetchUserData(user);
+        await fetchStats();
+        
       } catch (err) {
         setError('Error fetching data');
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) fetchUserAndData();
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const calculateProblemDifficultyBreakdown = (submissions) => {
-    const solvedProblems = new Set();
+    const solvedProblems = new Map();
 
     submissions.forEach((sub) => {
       if (sub.verdict === 'OK') {
-        solvedProblems.add(`${sub.problem.contestId}-${sub.problem.index}`);
+        const problemId = `${sub.problem.contestId}-${sub.problem.index}`;
+        if (!solvedProblems.has(problemId)) {
+          solvedProblems.set(problemId, sub.problem);
+        }
       }
     });
 
@@ -48,11 +122,7 @@ const ProblemDifficultyBreakdown = () => {
       hard: 0,
     };
 
-    solvedProblems.forEach((problemId) => {
-      const problem = submissions.find(
-        (sub) => `${sub.problem.contestId}-${sub.problem.index}` === problemId
-      ).problem;
-
+    solvedProblems.forEach((problem) => {
       const rating = problem.rating || 0;
       if (rating <= 1300) breakdown.easy++;
       else if (rating <= 2000) breakdown.medium++;
