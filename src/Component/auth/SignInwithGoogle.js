@@ -6,57 +6,99 @@ import { useNavigate } from "react-router-dom";
 import googleLogo from "../../assets/google.webp";
 
 function SignInwithGoogle() {
-  const navigate = useNavigate(); // Initialize navigate for routing
+  const navigate = useNavigate();
 
   async function googleLogin() {
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(auth, provider)
-      .then(async (result) => {
-        const user = result.user;
+    try {
+      console.log("Starting Google login process...");
+      const provider = new GoogleAuthProvider();
+      
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      console.log("Google sign in successful:", user);
 
-        if (user) {
-          // Split the displayName into first, middle, and last name if applicable
-          const nameParts = user.displayName?.split(" ");
-          const firstName = nameParts[0];
-          const middleName = nameParts.length > 2 ? nameParts.slice(1, nameParts.length - 1).join(" ") : "";
-          const lastName = nameParts[nameParts.length - 1] || "";
-
-          // Store user info in Firestore
+      if (user) {
+        try {
           const userRef = doc(db, "Users", user.uid);
+          console.log("Checking user document:", user.uid);
+          
           const userDoc = await getDoc(userRef);
-
+          
           if (!userDoc.exists()) {
-            // If the user doesn't exist in Firestore, create the document
-            await setDoc(userRef, {
+            console.log("Creating new user document");
+            const nameParts = user.displayName?.split(" ") || [];
+            const userData = {
               email: user.email,
-              firstName,
-              middleName,
-              lastName,
+              firstName: nameParts[0] || "",
+              middleName: nameParts.length > 2 ? nameParts.slice(1, -1).join(" ") : "",
+              lastName: nameParts[nameParts.length - 1] || "",
               photo: user.photoURL,
               college: "",
               leetcode: "",
-            });
-          }
+              createdAt: new Date().toISOString(),
+              lastLogin: new Date().toISOString()
+            };
 
-          // Fetch user data to check if 'college' and 'leetcode' are empty
-          const userData = userDoc.data();
-          if (!userData?.college || !userData?.leetcode) {
-            navigate("/datainput"); // Redirect to data input page if empty
+            try {
+              await setDoc(userRef, userData);
+              console.log("New user document created successfully");
+              toast.success("Account created successfully!");
+              navigate("/datainput");
+            } catch (writeError) {
+              console.error("Error writing user document:", writeError);
+              toast.error("Error creating user profile. Please try again.");
+            }
           } else {
-            navigate("/dashboard"); // Redirect to dashboard if both fields are filled
+            console.log("Existing user found");
+            const userData = userDoc.data();
+            
+            // Update last login
+            try {
+              await setDoc(userRef, {
+                lastLogin: new Date().toISOString()
+              }, { merge: true });
+              
+              if (!userData?.college || !userData?.leetcode) {
+                navigate("/datainput");
+              } else {
+                navigate("/dashboard");
+              }
+              
+              toast.success("Welcome back!");
+            } catch (updateError) {
+              console.error("Error updating last login:", updateError);
+              // Continue with navigation even if update fails
+              navigate(!userData?.college || !userData?.leetcode ? "/datainput" : "/dashboard");
+            }
           }
-
-          toast.success("User logged in successfully", {
-            position: "top-center",
-          });
+        } catch (firestoreError) {
+          console.error("Firestore operation failed:", firestoreError);
+          // If Firestore fails, still allow login but show warning
+          toast.warning("Signed in, but there was an error loading your profile.");
+          navigate("/datainput");
         }
-      })
-      .catch((error) => {
-        console.log(error.message);
-        toast.error("Google login failed", {
-          position: "bottom-center",
-        });
+      }
+    } catch (error) {
+      console.error("Google Sign In Error:", {
+        code: error.code,
+        message: error.message,
+        fullError: error
       });
+      
+      switch (error.code) {
+        case 'auth/popup-blocked':
+          toast.error("Please allow popups for this website");
+          break;
+        case 'auth/popup-closed-by-user':
+          toast.error("Sign in was cancelled");
+          break;
+        case 'auth/unauthorized-domain':
+          toast.error("This domain is not authorized");
+          break;
+        default:
+          toast.error("Sign in failed. Please try again.");
+      }
+    }
   }
 
   return (
