@@ -1,8 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { auth, db } from './auth/Firebase';
+import { auth, db } from '../auth/Firebase';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { onAuthStateChanged, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import { Link, useNavigate } from 'react-router-dom';
+import logoCS from "../../assets/logos/logoCS.png";
+import dashboard from "../../assets/logos/dashboard.png";
+import leetcode from "../../assets/logos/leetcode.png";
+import gfg from "../../assets/logos/gfg.png";
+import codeforces from "../../assets/logos/codeforces.png";
+
+
 
 const NavBar = () => {
   const [usernames, setUsernames] = useState({
@@ -132,7 +139,7 @@ const NavBar = () => {
             onClick={() => navigate('/dashboard')}
             >
               <img
-                src="/logoCS.png"
+                src={logoCS}
                 alt="CoderStats Logo"
                 className="w-10 h-10 rounded-full"
               />
@@ -145,7 +152,7 @@ const NavBar = () => {
   {usernames.leetcode && (
     <Link to="/dashboard" className="flex flex-col items-center text-md font-bold text-white hover:text-[#F8970D]">
       <img
-        src="/dashboard.png"
+        src={dashboard}
         alt="dashboard Logo"
         className="w-8 h-8 rounded-full"
       />
@@ -155,7 +162,7 @@ const NavBar = () => {
   {usernames.leetcode && (
     <Link to="/leetcode" className="flex flex-col items-center text-md font-bold text-white hover:text-[#F8970D]">
       <img
-        src="/leetcode.png"
+        src={leetcode}
         alt="leetcode Logo"
         className="w-8 h-8 rounded-full"
       />
@@ -165,7 +172,7 @@ const NavBar = () => {
   {usernames.gfg && (
     <Link to="/gfg" className="flex flex-col items-center text-md font-bold text-white hover:text-[#F8970D]">
       <img
-        src="/gfg.png"
+        src={gfg}
         alt="gfg Logo"
         className="w-8 h-8 rounded-full"
       />
@@ -175,7 +182,7 @@ const NavBar = () => {
   {usernames.codeforces && (
     <Link to="/codeforces" className="flex flex-col items-center text-md font-bold text-white hover:text-[#F8970D]">
       <img
-        src="/codeforces.png"
+        src={codeforces}
         alt="Codeforces Logo"
         className="w-8 h-8 rounded-full"
       />
@@ -236,7 +243,7 @@ const NavBar = () => {
           {usernames.leetcode && (
             <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
               <img
-                src="/dashboard.png"
+                src={dashboard}
                 alt="dashboard Logo"
                 className="w-8 h-8 rounded-full"
               />
@@ -245,7 +252,7 @@ const NavBar = () => {
           {usernames.leetcode && (
             <Link to="/leetcode" onClick={() => setIsMobileMenuOpen(false)}>
               <img
-                src="/leetcode.png"
+                src={leetcode}
                 alt="leetcode Logo"
                 className="w-8 h-8 rounded-full"
               />
@@ -254,7 +261,7 @@ const NavBar = () => {
           {usernames.gfg && (
             <Link to="/gfg" onClick={() => setIsMobileMenuOpen(false)}>
               <img
-                src="/gfg.png"
+                src={gfg}
                 alt="gfg Logo"
                 className="w-8 h-8 rounded-full"
               />
@@ -263,7 +270,7 @@ const NavBar = () => {
           {usernames.codeforces && (
             <Link to="/codeforces" onClick={() => setIsMobileMenuOpen(false)}>
               <img
-                src="/codeforces.png"
+                src={codeforces}
                 alt="codeforces Logo"
                 className="w-8 h-8 rounded-full"
               />

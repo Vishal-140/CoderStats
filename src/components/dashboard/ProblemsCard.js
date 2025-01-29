@@ -1,5 +1,5 @@
 import React from 'react';
-import { getCodeforcesTotalSolved } from '../codeforces/CodeForcesStats';
+import { getCodeforcesTotalSolved } from '../platformStats/codeforces/CodeForcesStats';
 
 const ProblemsCard = ({ platformData, usernames, loading, platformErrors }) => {
   console.log("Full platformData:", platformData);

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { auth, db } from "./auth/Firebase";
+import { auth, db } from "../auth/Firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import editPencil from "../assets/editpencil.svg"; // Correct path to the SVG
+import editPencil from "../../assets/icons/editpencil.svg"; 
 
 const ProfileCard = () => {
   const [userDetails, setUserDetails] = useState(null);
@@ -28,7 +28,7 @@ const ProfileCard = () => {
         const userData = docSnap.data();
         
         // If no photo URL exists, use the default
-        userData.photo = userData.photo || "/logoCS.png";
+        userData.photo = userData.photo || "../../assets/logos/logoCS";
         
         setUserDetails(userData);
       } else {

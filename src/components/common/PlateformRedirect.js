@@ -1,5 +1,8 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import leetcode from "../../assets/logos/leetcode.png";
+import gfg from "../../assets/logos/gfg.png";
+import codeforces from "../../assets/logos/codeforces.png";
 
 function PlateformRedirect({ usernames }) {
   const navigate = useNavigate();
@@ -33,7 +36,7 @@ function PlateformRedirect({ usernames }) {
           onClick={() => handleRedirect('leetcode', usernames.leetcode)}
         >
           <img
-            src="/leetcode.png"
+            src={leetcode}
             alt="Leetcode Logo"
             className="w-8 h-8 ml-8 mr-5"
           />
@@ -47,7 +50,7 @@ function PlateformRedirect({ usernames }) {
           onClick={() => handleRedirect('gfg', usernames.gfg)}
         >
           <img
-            src="/gfg.png"
+            src={gfg}
             alt="GFG Logo"
             className="w-8 h-8 ml-8 mr-5"
           />
@@ -61,7 +64,7 @@ function PlateformRedirect({ usernames }) {
           onClick={() => handleRedirect('codeforces', usernames.codeforces)}
         >
           <img
-            src="/codeforces.png"
+            src={codeforces}
             alt="Codeforces Logo"
             className="w-8 h-8 ml-8 mr-5"
           />

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { auth, db } from '../auth/Firebase';
+import { auth, db } from '../../auth/Firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import API from '../auth/API';
-import ProfileCard from '../ProfileCard';
-import CalendarCard from '../CalendarCard';
+import API from '../../services/API';
+import ProfileCard from '../../profile/ProfileCard';
+import CalendarCard from '../../common/CalendarCard';
 import DifficultyBreakdown from './DifficultyBreakdown';
 
 const GFGStats = () => {

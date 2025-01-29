@@ -1,14 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
-import NavBar from './Component/NavBar';
-import Footer from './Component/Footer';
-import Login from './Component/auth/Login';
-import Register from './Component/auth/Register';
-import DataInput from './Component/DataInput';
-import Dashboard from './Component/dashboard/Dashboard';
-import LeetCodeStats from './Component/leetcode/LeetCodeStats';
-import GFGStats from './Component/gfg/GFGStats';
-import CodeForcesStats from './Component/codeforces/CodeForcesStats';
+import NavBar from './components/common/NavBar';
+import Footer from './components/common/Footer';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
+import DataInput from './components/profile/DataInput';
+import Dashboard from './components/dashboard/Dashboard';
+import LeetCodeStats from './components/platformStats/leetcode/LeetCodeStats';
+import GFGStats from './components/platformStats/gfg/GFGStats';
+import CodeForcesStats from './components/platformStats/codeforces/CodeForcesStats';
 
 const App = () => {
   const location = useLocation(); // Get the current route

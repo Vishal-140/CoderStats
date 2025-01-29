@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { auth, db } from '../auth/Firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import axios from 'axios';
-import API from '../auth/API';
-import ProfileCard from '../ProfileCard';
-import CalendarCard from '../CalendarCard';
+import API from '../services/API';
+import ProfileCard from '../profile/ProfileCard';
+import CalendarCard from '../common/CalendarCard';
 import ProblemsCard from './ProblemsCard';
 import RankingsCard from './RankingCard';
 import ContestRatingsCard from './ContestRatingsCard';
 import DifficultyBreakdownCard from './DifficultyBreakdownCard';
-import PlateformRedirect from '../PlateformRedirect';
+import PlateformRedirect from '../common/PlateformRedirect';
 
 
 const Dashboard = () => {

@@ -5,6 +5,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Eye, EyeOff, Lock, Mail, User } from "lucide-react";
+import logo from '../../assets/logos/logoCS.png'
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -62,7 +63,7 @@ const Register = () => {
           <div className="flex items-center justify-between h-16 md:h-20">
             <div className="flex items-center space-x-2">
               <img
-                src="/logoCS.png"
+                src={logo}
                 alt="CoderStats Logo"
                 className="w-14 h-14 rounded-full"
               />

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { auth, db } from '../auth/Firebase';
+import { auth, db } from '../../auth/Firebase';
 import { doc, getDoc } from 'firebase/firestore';
-import ProfileCard from '../ProfileCard';
+import ProfileCard from '../../profile/ProfileCard';
 
 
 const CodeForcesStats = () => {

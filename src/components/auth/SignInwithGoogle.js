@@ -3,7 +3,7 @@ import { auth, db } from "../auth/Firebase";
 import { toast } from "react-toastify";
 import { setDoc, doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import googleLogo from "../../assets/google.webp";
+import googleLogo from "../../assets/icons/google.webp";
 
 function SignInwithGoogle() {
   const navigate = useNavigate();

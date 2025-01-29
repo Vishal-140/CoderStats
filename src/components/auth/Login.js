@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import SignInwithGoogle from "./SignInwithGoogle";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import logo from '../../assets/logos/logoCS.png'
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -77,7 +78,7 @@ const Login = () => {
             <div className="flex items-center space-x-2"
             >
               <img
-                src="/logoCS.png"
+                src={logo}
                 alt="CoderStats Logo"
                 className="w-14 h-14 rounded-full"
               />
