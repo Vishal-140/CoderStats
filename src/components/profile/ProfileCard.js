@@ -3,6 +3,8 @@ import { auth, db } from "../auth/Firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import editPencil from "../../assets/icons/editpencil.svg"; 
+import github from "../../assets/logos/githubLogo.png";
+import linkedin from "../../assets/logos/linkedinLogo.png";
 
 const ProfileCard = () => {
   const [userDetails, setUserDetails] = useState(null);
@@ -106,7 +108,7 @@ const ProfileCard = () => {
       className="flex flex-col items-center text-blue-500 hover:text-blue-600"
     >
       <img
-        src="/linkedinLogo.png"
+        src={linkedin}
         alt="LinkedIn Logo"
         className="w-6 h-6 mb-2"
       />
@@ -121,7 +123,7 @@ const ProfileCard = () => {
       className="flex flex-col items-center text-gray-400 hover:text-gray-500"
     >
       <img
-        src="/githubLogo.png"
+        src={github}
         alt="GitHub Logo"
         className="w-6 h-6 mb-2"
       />
