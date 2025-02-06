@@ -5,10 +5,10 @@ import axios from 'axios';
 import API from '../services/API';
 import ProfileCard from '../profile/ProfileCard';
 import CalendarCard from '../common/CalendarCard';
-import ProblemsCard from './ProblemsCard';
-import RankingsCard from './RankingCard';
-import ContestRatingsCard from './ContestRatingsCard';
-import DifficultyBreakdownCard from './DifficultyBreakdownCard';
+import ProblemsCard from '../dashboard/ProblemsCard';
+import RankingsCard from '../dashboard/RankingCard';
+import ContestRatingsCard from '../dashboard/ContestRatingsCard';
+import DifficultyBreakdownCard from '../dashboard/DifficultyBreakdownCard';
 import PlateformRedirect from '../common/PlateformRedirect';
 
 

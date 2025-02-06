@@ -1,14 +1,13 @@
-import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import NavBar from './components/common/NavBar';
 import Footer from './components/common/Footer';
-import Login from './components/auth/Login';
-import Register from './components/auth/Register';
+import Login from './components/pages/Login';
+import Register from './components/pages/Register';
 import DataInput from './components/profile/DataInput';
-import Dashboard from './components/dashboard/Dashboard';
-import LeetCodeStats from './components/platformStats/leetcode/LeetCodeStats';
-import GFGStats from './components/platformStats/gfg/GFGStats';
-import CodeForcesStats from './components/platformStats/codeforces/CodeForcesStats';
+import Dashboard from './components/pages/Dashboard';
+import LeetCodeStats from './components/pages/LeetCodeStats';
+import GFGStats from './components/pages/GFGStats';
+import CodeForcesStats from './components/pages/CodeForcesStats';
 
 const App = () => {
   const location = useLocation(); // Get the current route
@@ -19,6 +18,7 @@ const App = () => {
 
   return (
     <>
+    {/* NavBar */}
       {isNavBarVisible && <NavBar />}
       
       <div>
@@ -36,7 +36,7 @@ const App = () => {
           <Route path="/codeforces" element={<CodeForcesStats />} />
         </Routes>
       </div>
-
+      {/* Footer */}
       <Footer />
     </>
   );

@@ -4,7 +4,7 @@ import { auth, db } from "../auth/Firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import SignInwithGoogle from "./SignInwithGoogle";
+import SignInwithGoogle from "../auth/SignInwithGoogle";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import logo from '../../assets/logos/logoCS.png'
 
