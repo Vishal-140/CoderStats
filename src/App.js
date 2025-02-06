@@ -1,26 +1,28 @@
-import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
-import NavBar from './components/common/NavBar';
-import Footer from './components/common/Footer';
-import Login from './components/pages/Login';
-import Register from './components/pages/Register';
-import DataInput from './components/profile/DataInput';
-import Dashboard from './components/pages/Dashboard';
-import LeetCodeStats from './components/pages/LeetCodeStats';
-import GFGStats from './components/pages/GFGStats';
-import CodeForcesStats from './components/pages/CodeForcesStats';
+import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from "react-router-dom";
+import NavBar from "./components/common/NavBar";
+import Footer from "./components/common/Footer";
+import Login from "./components/pages/Login";
+import Register from "./components/pages/Register";
+import DataInput from "./components/profile/DataInput";
+import Dashboard from "./components/pages/Dashboard";
+import LeetCodeStats from "./components/pages/LeetCodeStats";
+import GFGStats from "./components/pages/GFGStats";
+import CodeForcesStats from "./components/pages/CodeForcesStats";
+import { LeetCodeProvider } from "./context/LeetCodeContext";
+import { GFGProvider } from "./context/GFGContext";
 
 const App = () => {
   const location = useLocation(); // Get the current route
 
   // Define routes where NavBar should not be visible
-  const noNavBarRoutes = ['/login', '/register'];
+  const noNavBarRoutes = ["/login", "/register"];
   const isNavBarVisible = !noNavBarRoutes.includes(location.pathname);
 
   return (
     <>
-    {/* NavBar */}
+      {/* NavBar */}
       {isNavBarVisible && <NavBar />}
-      
+
       <div>
         <Routes>
           {/* Redirect from home to login */}
@@ -44,7 +46,11 @@ const App = () => {
 
 const Root = () => (
   <Router>
-    <App />
+    <LeetCodeProvider>
+      <GFGProvider>
+        <App />
+      </GFGProvider>
+    </LeetCodeProvider>
   </Router>
 );
 
