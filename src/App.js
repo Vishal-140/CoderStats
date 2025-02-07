@@ -10,6 +10,7 @@ import GFGStats from "./components/pages/GFGStats";
 import CodeForcesStats from "./components/pages/CodeForcesStats";
 import { LeetCodeProvider } from "./context/LeetCodeContext";
 import { GFGProvider } from "./context/GFGContext";
+import { CodeForcesProvider } from "./context/CodeForcesContext";
 
 const App = () => {
   const location = useLocation(); // Get the current route
@@ -48,7 +49,9 @@ const Root = () => (
   <Router>
     <LeetCodeProvider>
       <GFGProvider>
+        <CodeForcesProvider>
         <App />
+        </CodeForcesProvider>
       </GFGProvider>
     </LeetCodeProvider>
   </Router>
