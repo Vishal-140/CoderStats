@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { auth, db } from '../auth/Firebase';
+import { auth, db } from '../components/auth/Firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import axios from 'axios';
-import API from '../services/API';
-import ProfileCard from '../profile/ProfileCard';
-import CalendarCard from '../common/CalendarCard';
-import ProblemsCard from '../dashboard/ProblemsCard';
-import RankingsCard from '../dashboard/RankingCard';
-import ContestRatingsCard from '../dashboard/ContestRatingsCard';
-import DifficultyBreakdownCard from '../dashboard/DifficultyBreakdownCard';
-import PlateformRedirect from '../common/PlateformRedirect';
+import API from '../components/services/API';
+import ProfileCard from '../components/profile/ProfileCard';
+import CalendarCard from '../components/common/CalendarCard';
+import ProblemsCard from '../components/dashboard/ProblemsCard';
+import RankingsCard from '../components/dashboard/RankingCard';
+import ContestRatingsCard from '../components/dashboard/ContestRatingsCard';
+import DifficultyBreakdownCard from '../components/dashboard/DifficultyBreakdownCard';
+import PlateformRedirect from '../components/common/PlateformRedirect';
 
 
 const Dashboard = () => {

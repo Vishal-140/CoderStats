@@ -1,11 +1,11 @@
 import React, { useContext } from "react";
-import { LeetCodeContext } from "../../context/LeetCodeContext";
-import ProfileCard from "../../components/profile/ProfileCard";
-import CalendarCard from "../../components/common/CalendarCard";
-import RecentSubmissions from "../platformStats/leetcode/RecentSubmissions";
-import SubmissionStats from "../platformStats/leetcode/SubmissionStats";
-import StatsSummaryCard from "../platformStats/leetcode/StatsSummaryCard";
-import DifficultyStatsCard from "../platformStats/leetcode/DifficultyStatsCard";
+import { LeetCodeContext } from "../context/LeetCodeContext";
+import ProfileCard from "../components/profile/ProfileCard";
+import CalendarCard from "../components/common/CalendarCard";
+import RecentSubmissions from "../components/platformStats/leetcode/RecentSubmissions";
+import SubmissionStats from "../components/platformStats/leetcode/SubmissionStats";
+import StatsSummaryCard from "../components/platformStats/leetcode/StatsSummaryCard";
+import DifficultyStatsCard from "../components/platformStats/leetcode/DifficultyStatsCard";
 
 const LeetCodeStats = () => {
   const { stats, username } = useContext(LeetCodeContext);

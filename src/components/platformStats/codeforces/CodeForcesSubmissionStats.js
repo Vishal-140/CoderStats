@@ -1,53 +1,32 @@
 import React from 'react';
-import { useGFG } from '../../../context/GFGContext';
+import { useCodeForces } from '../../../context/CodeForcesContext';
 
-const GFGSubmissionStats = () => {
-    const { stats } = useGFG();
-
-    // to extract numeric value only from string
-    const extractNumber = (str) => {
-        if (!str) return 0;
-        const matches = str.match(/\d+/);
-        return matches ? parseInt(matches[0]) : 0;
-    };
+const CodeForcesSubmissionStats = () => {
+    const { stats } = useCodeForces();
 
     const submissionData = [
         {
-            difficulty: "School",
-            count: extractNumber(stats.school),
-            submissions: "NA"
-        },
-        {
-            difficulty: "Basic",
-            count: extractNumber(stats.basic),
-            submissions: "NA"
-        },
-        {
             difficulty: "Easy",
-            count: extractNumber(stats.easy),
-            submissions: "NA"
+            count: stats?.difficultyBreakdown?.Easy || 0,
+            description: "≤ 1200"
         },
         {
             difficulty: "Medium",
-            count: extractNumber(stats.medium),
-            submissions: "NA"
+            count: stats?.difficultyBreakdown?.Medium || 0,
+            description: "1300-2000"
         },
         {
             difficulty: "Hard",
-            count: extractNumber(stats.hard),
-            submissions: "NA"
+            count: stats?.difficultyBreakdown?.Hard || 0,
+            description: "> 2000"
         }
     ];
 
-    // total solved problems
-    const totalSolved = submissionData.reduce((acc, curr) => acc + curr.count, 0);
+    // Calculate total solved
+    const totalSolved = stats?.problemsSolved || 0;
 
     const getBgColor = (difficulty) => {
         switch (difficulty.toLowerCase()) {
-            case "school":
-                return "bg-purple-600";
-            case "basic":
-                return "bg-cyan-600";
             case "easy":
                 return "bg-green-600";
             case "medium":
@@ -71,16 +50,11 @@ const GFGSubmissionStats = () => {
                         className={`${getBgColor(submission.difficulty)} text-white p-4 rounded-lg shadow-md w-full sm:w-[48%] md:w-[30%] lg:w-[23%] flex flex-col items-center`}
                     >
                         <h4 className="text-lg font-semibold mb-2">{submission.difficulty}</h4>
+                        <p className="text-sm mb-2 text-gray-200">Rating: {submission.description}</p>
                         <p>
                             <strong>Solved:</strong>{' '}
                             <span className="text-xl font-bold">{submission.count}</span>
                         </p>
-                        {submission.submissions !== "NA" && (
-                            <p>
-                                <strong>Attempts:</strong>{' '}
-                                <span className="text-xl font-bold">{submission.submissions}</span>
-                            </p>
-                        )}
                     </div>
                 ))}
 
@@ -89,6 +63,7 @@ const GFGSubmissionStats = () => {
                     className={`${getBgColor('total')} text-white p-4 rounded-lg shadow-md w-full sm:w-[48%] md:w-[30%] lg:w-[23%] flex flex-col items-center`}
                 >
                     <h4 className="text-lg font-semibold mb-2">All</h4>
+                    <p className="text-sm mb-2 text-gray-200">All Difficulties</p>
                     <p>
                         <strong>Solved:</strong>{' '}
                         <span className="text-xl font-bold">{totalSolved}</span>
@@ -99,4 +74,4 @@ const GFGSubmissionStats = () => {
     );
 };
 
-export default GFGSubmissionStats;
+export default CodeForcesSubmissionStats;

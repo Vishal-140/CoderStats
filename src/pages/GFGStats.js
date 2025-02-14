@@ -1,9 +1,9 @@
 import React from "react";
-import { useGFG } from "../../context/GFGContext";
-import ProfileCard from "../profile/ProfileCard";
-import CalendarCard from "../common/CalendarCard";
-import DifficultyBreakdown from "../platformStats/gfg/DifficultyBreakdown";
-import GFGSubmissionStats from "../platformStats/gfg/GFGSubmissionStats";
+import { useGFG } from "../context/GFGContext";
+import ProfileCard from "../components/profile/ProfileCard";
+import CalendarCard from "../components/common/CalendarCard";
+import DifficultyBreakdown from "../components/platformStats/gfg/DifficultyBreakdown";
+import GFGSubmissionStats from "../components/platformStats/gfg/GFGSubmissionStats";
 
 const GFGStats = () => {
   const { stats, error } = useGFG();

@@ -1,8 +1,9 @@
 import React from "react";
-import { useCodeForces } from "../../context/CodeForcesContext";
-import ProfileCard from "../profile/ProfileCard";
-import CalendarCard from "../common/CalendarCard";
-import DifficultyBreakdown from "../platformStats/codeforces/DifficultyBreakdown";
+import { useCodeForces } from "../context/CodeForcesContext";
+import ProfileCard from "../components/profile/ProfileCard";
+import CalendarCard from "../components/common/CalendarCard";
+import DifficultyBreakdown from "../components/platformStats/codeforces/DifficultyBreakdown";
+import CodeForcesSubmissionStats from "../components/platformStats/codeforces/CodeForcesSubmissionStats";
 
 const CodeForcesStats = () => {
     const context = useCodeForces();
@@ -64,6 +65,7 @@ const CodeForcesStats = () => {
                                 <p className="text-3xl font-bold">{stats.totalSubmissions || 0}</p>
                             </div>
                         </div>
+                        <CodeForcesSubmissionStats/>
                     </div>
                 </div>
                 <div className="bg-gray-700 p-4 rounded-lg shadow-md">
