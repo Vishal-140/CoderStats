@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
-import { auth, db } from "../auth/Firebase";
+import { auth, db } from "./Firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import SignInwithGoogle from "../auth/SignInwithGoogle";
+import SignInwithGoogle from "./SignInwithGoogle";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import logo from '../../assets/logos/logoCS.png'
 

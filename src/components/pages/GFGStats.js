@@ -3,6 +3,7 @@ import { useGFG } from "../../context/GFGContext";
 import ProfileCard from "../profile/ProfileCard";
 import CalendarCard from "../common/CalendarCard";
 import DifficultyBreakdown from "../platformStats/gfg/DifficultyBreakdown";
+import GFGSubmissionStats from "../platformStats/gfg/GFGSubmissionStats";
 
 const GFGStats = () => {
   const { stats, error } = useGFG();
@@ -37,6 +38,7 @@ const GFGStats = () => {
               {renderMetricsCard("Contest Rating", stats.contestRating)}
               {renderMetricsCard("Submissions", stats.codingStats.submissions)}
             </div>
+            <GFGSubmissionStats/>
           </div>
         </div>
       </div>

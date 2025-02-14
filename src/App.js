@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from "react-router-dom";
 import NavBar from "./components/common/NavBar";
 import Footer from "./components/common/Footer";
-import Login from "./components/pages/Login";
-import Register from "./components/pages/Register";
+import Login from "./components/auth/Login";
+import Register from "./components/auth/Register";
 import DataInput from "./components/profile/DataInput";
 import Dashboard from "./components/pages/Dashboard";
 import LeetCodeStats from "./components/pages/LeetCodeStats";
