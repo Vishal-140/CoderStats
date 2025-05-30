@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { LeetCodeContext } from "../context/LeetCodeContext";
+import React from "react";
+import { useGlobalData } from "../context/GlobalDataContext";
 import ProfileCard from "../components/profile/ProfileCard";
 import CalendarCard from "../components/common/CalendarCard";
 import RecentSubmissions from "../components/platformStats/leetcode/RecentSubmissions";
@@ -8,7 +8,8 @@ import StatsSummaryCard from "../components/platformStats/leetcode/StatsSummaryC
 import DifficultyStatsCard from "../components/platformStats/leetcode/DifficultyStatsCard";
 
 const LeetCodeStats = () => {
-  const { stats, username } = useContext(LeetCodeContext);
+  const { platformData, usernames } = useGlobalData();
+  const stats = platformData.leetcode;
 
   return (
     <div className="max-w-7xl mx-auto p-2 sm:p-4 md:p-6 mt-20 bg-gray-800 text-white shadow-lg rounded-lg">
@@ -18,7 +19,7 @@ const LeetCodeStats = () => {
         <div className="flex flex-col lg:flex-row lg:space-x-4 xl:space-x-6">
           {/* Left Column */}
           <div className="w-full lg:w-1/4 space-y-4 sm:space-y-6">
-            <ProfileCard stats={stats} username={username || "NA"} />
+            <ProfileCard stats={stats} username={usernames.leetcode || "NA"} />
             <DifficultyStatsCard
               easySolved={stats?.easySolved}
               totalEasy={stats?.totalEasy}

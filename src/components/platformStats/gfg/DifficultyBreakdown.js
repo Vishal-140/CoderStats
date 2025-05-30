@@ -1,7 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 const DifficultyBreakdown = ({ stats }) => {
+  // Return early if stats is undefined or null
+  if (!stats) {
+    return <div className="bg-gray-700 p-3 rounded-lg shadow-md">
+      <h2 className="text-lg font-semibold text-blue-300 mb-2">Problem Difficulty Breakdown</h2>
+      <p className="text-center text-gray-400 py-4">No difficulty data available</p>
+    </div>;
+  }
+  
   const difficulties = ["school", "basic", "easy", "medium", "hard"];
   const colors = ["#3B82F6", "#14B8A6", "#22C55E", "#EAB308", "#EF4444"];
 

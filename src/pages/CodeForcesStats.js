@@ -1,18 +1,16 @@
 import React from "react";
-import { useCodeForces } from "../context/CodeForcesContext";
+import { useGlobalData } from "../context/GlobalDataContext";
 import ProfileCard from "../components/profile/ProfileCard";
 import CalendarCard from "../components/common/CalendarCard";
 import DifficultyBreakdown from "../components/platformStats/codeforces/DifficultyBreakdown";
 import CodeForcesSubmissionStats from "../components/platformStats/codeforces/CodeForcesSubmissionStats";
 
 const CodeForcesStats = () => {
-    const context = useCodeForces();
-    
-    if (!context) {
-        return <div className="text-center text-red-500">Error: Context is not available.</div>;
-    }
-
-    const { stats = {}, submissions = [], error, loading } = context;
+    const { platformData, platformErrors, usernames, loading, codeforcesSubmissions } = useGlobalData();
+    const stats = platformData.codeforces || {};
+    const error = platformErrors.codeforces;
+    // Use submissions from the GlobalDataContext
+    const submissions = codeforcesSubmissions || [];
 
     return (
         <div className="max-w-7xl mx-auto p-4 mt-20 bg-gray-800 text-white shadow-lg rounded-lg">
@@ -23,7 +21,7 @@ const CodeForcesStats = () => {
                     <div className="w-full lg:w-1/4 space-y-4">
                         <ProfileCard
                             stats={stats}
-                            username={stats.handle || 'NA'}
+                            username={usernames.codeforces || 'NA'}
                             error={error}
                             loading={loading}
                         />

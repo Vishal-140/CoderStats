@@ -1,8 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { auth, db } from '../components/auth/Firebase';
-import { doc, getDoc } from 'firebase/firestore';
-import axios from 'axios';
-import API from '../components/services/API';
+import React from 'react';
 import ProfileCard from '../components/profile/ProfileCard';
 import CalendarCard from '../components/common/CalendarCard';
 import ProblemsCard from '../components/dashboard/ProblemsCard';
@@ -10,95 +6,11 @@ import RankingsCard from '../components/dashboard/RankingCard';
 import ContestRatingsCard from '../components/dashboard/ContestRatingsCard';
 import DifficultyBreakdownCard from '../components/dashboard/DifficultyBreakdownCard';
 import PlateformRedirect from '../components/common/PlateformRedirect';
-
+import { useGlobalData } from '../context/GlobalDataContext';
 
 const Dashboard = () => {
-  const [platformData, setPlatformData] = useState({
-    leetcode: null,
-    gfg: null,
-    codeforces: null,
-  });
-  const [platformErrors, setPlatformErrors] = useState({
-    leetcode: null,
-    gfg: null,
-    codeforces: null,
-  });
-  const [loading, setLoading] = useState(true);
-  const [usernames, setUsernames] = useState({
-    leetcode: null,
-    gfg: null,
-    codeforces: null,
-  });
-
-  const fetchUserData = async (user) => {
-    try {
-      const docSnap = await getDoc(doc(db, 'Users', user.uid));
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setUsernames({
-          leetcode: data.leetcode || null,
-          gfg: data.gfg || null,
-          codeforces: data.codeforces || null,
-        });
-      }
-    } catch (error) {
-      console.error('Firebase fetch error:', error);
-    }
-  };
-
-  const fetchPlatformStats = async () => {
-    setLoading(true);
-    const newPlatformData = { ...platformData };
-    const newPlatformErrors = { ...platformErrors };
-
-    const fetchData = async (platform, url, dataTransform) => {
-      try {
-        const { data } = await axios.get(url);
-        newPlatformData[platform] = dataTransform ? dataTransform(data) : data;
-        newPlatformErrors[platform] = null;
-      } catch (err) {
-        newPlatformErrors[platform] = `Error fetching ${platform} data`;
-        newPlatformData[platform] = null;
-      }
-    };
-
-    const promises = [];
-    if (usernames.leetcode) {
-      promises.push(
-        fetchData('leetcode', `${API.leetcodeAPI}${usernames.leetcode}`)
-      );
-    }
-    if (usernames.gfg) {
-      promises.push(fetchData('gfg', `${API.gfgAPI}${usernames.gfg}`));
-    }
-    if (usernames.codeforces) {
-      promises.push(
-        fetchData(
-          'codeforces',
-          `${API.CodeforcesAPI}${usernames.codeforces}`,
-          (data) => data?.result?.[0]
-        )
-      );
-    }
-
-    await Promise.allSettled(promises);
-    setPlatformData(newPlatformData);
-    setPlatformErrors(newPlatformErrors);
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) fetchUserData(user);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (Object.values(usernames).some((username) => username)) {
-      fetchPlatformStats();
-    }
-  }, [usernames]);
+  // Use the global data context instead of fetching data directly
+  const { platformData, platformErrors, usernames, loading } = useGlobalData();
 
   return (
     <div className="max-w-7xl mx-auto p-4 mt-20 bg-gray-800 text-white shadow-lg rounded-lg">

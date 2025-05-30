@@ -1,8 +1,9 @@
 import React from 'react';
-import { useGFG } from '../../../context/GFGContext';
+import { useGlobalData } from '../../../context/GlobalDataContext';
 
 const GFGSubmissionStats = () => {
-    const { stats } = useGFG();
+    const { platformData } = useGlobalData();
+    const stats = platformData?.gfg || {};
 
     // to extract numeric value only from string
     const extractNumber = (str) => {

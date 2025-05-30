@@ -1,8 +1,9 @@
 import React from 'react';
-import { useCodeForces } from '../../../context/CodeForcesContext';
+import { useGlobalData } from '../../../context/GlobalDataContext';
 
 const CodeForcesSubmissionStats = () => {
-    const { stats } = useCodeForces();
+    const { platformData } = useGlobalData();
+    const stats = platformData?.codeforces || {};
 
     const submissionData = [
         {
